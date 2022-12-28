@@ -21,17 +21,15 @@ h1 {
   color: white;
   margin: 30px 20px;
 }
-h2 {
-  margin-top: 30px;
-  font-weight: normal;
-  color: white;
-}
-#complete {
+#complete-overlay {
   position: fixed;
-  right: 80px;
-  top: 50px;
+  left: 0;
+  top: 0;
   cursor: pointer;
-  transition: margin 700ms;
+  width: 100%;
+}
+#complete-overlay img {
+  width: 100%;
 }
 #form-fields {
   display: flex;
@@ -60,10 +58,17 @@ h2 {
   color: white;
   padding: 0 10px;
 }
+#results-title {
+  display: none;
+  margin-top: 30px;
+  font-weight: normal;
+  color: white;
+}
 #results {
-  display: flex;
+  display: none;
   flex-wrap: wrap;
 }
+
 .results-word {
   background: white;
   color: green;

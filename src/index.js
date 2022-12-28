@@ -1,9 +1,12 @@
 (function() {
   const $ = selector => document.querySelector(selector);
 
+  let completed = false;
+
   const config = {
     stateName: 'spelling-state',
-    completedCount: 3
+    fieldCount: 10,
+    completedCount: 5
   };
 
   const year2 = [
@@ -20,10 +23,18 @@
 
   const allWords = [...year2, ...year3, ...year4];
   const spellingState = JSON.parse(localStorage.getItem(config.stateName) || '{}');
-  const incompleteWords = allWords.filter(word => !((spellingState[word] || 0) > config.completedCount));
+  const incompleteWords = allWords.filter(word => !((spellingState[word] || 0) >= config.completedCount));
 
-  const getRandomWord = (arr) => arr[Math.floor(Math.random() * arr.length)];
-  const words = ['','','','','','','','','',''].map(() => getRandomWord(incompleteWords));
+  let shuffledWords = incompleteWords
+    .map(value => ({ value, sort: Math.random() }))
+    .sort((a, b) => a.sort - b.sort)
+    .map(({ value }) => value);
+
+  const words = shuffledWords.slice(0, config.fieldCount);
+
+  if (!words.length) {
+    $('#title').innerHTML = "Congratulations 😊 <div>You have learned every word!! 😊😊😊</div>";
+  }
 
   const wordToId = word => word.replace(/[^\w]/g, '');
 
@@ -37,12 +48,12 @@
     }
   }
 
-  window.clearCelebration = () => {
-    $('#complete').style.marginRight = '-600px';
+  window.clearComplete = () => {
+    setTimeout(() => { location.reload(); }, 1000);
   }
 
   window.updateResults = () => {
-    const complete = words.reduce((allCorrect, word) => {
+    const isComplete = words.reduce((allCorrect, word) => {
       const input = $(`#${wordToId(word)}`);
       const isCorrect = input?.value.trim() === word;
       if (input.value) {
@@ -51,15 +62,16 @@
       return allCorrect && isCorrect;
     }, true);
 
-    if (complete) {
+    if (!completed && isComplete) {
+      completed = true;
       words.forEach(word => {
         spellingState[word] = (spellingState[word] || 0) + 1;
       })
       localStorage.setItem(config.stateName, JSON.stringify(spellingState));
 
-      $('#complete').style.marginRight = 0;
-      $('#complete').innerHTML = '<img src="https://i.giphy.com/media/7frSUXgbGqQPKNnJRS/giphy.webp" onclick="clearCelebration()" />'
-      window.speak("You are so awesome, great job. Now let's dance. wop wop wop wop wop wop wop wop wop");
+      $('#complete-overlay').innerHTML = '<img src="https://i.giphy.com/media/7frSUXgbGqQPKNnJRS/giphy.webp" onclick="clearComplete()" />'
+      window.speak("Awesome job! Wop wop wop wop wop wop wop wop wop wop wop wop");
+      setTimeout(clearComplete, 5000);
     }
   }
 
@@ -78,6 +90,17 @@
   $('#form-fields').innerHTML = (fieldsHtml);
   $('#results').innerHTML = (resultsHtml);
 
-  window.clearCelebration();
+  document.addEventListener("keyup", e => {
+    if(e.key === 'Enter') {
+      document.activeElement.blur();
+    }
+  });
+  document.addEventListener('contextmenu', e => {
+    e.preventDefault();
+  });
+  if (/results/i.test(location.search)) {
+    $('#results-title').style.display = 'block';
+    $('#results').style.display = 'flex';
+  }
 
 }());
