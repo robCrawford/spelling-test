@@ -9,7 +9,7 @@ body {
 }
 main {
   position: relative;
-  width: 850px;
+  max-width: 850px;
   margin: 0 auto;
   padding: 20px;
   background: #999;
@@ -19,6 +19,7 @@ h1 {
   font-size: 50px;
   font-weight: normal;
   color: white;
+  margin: 30px 20px;
 }
 h2 {
   margin-top: 30px;
@@ -32,15 +33,19 @@ h2 {
   cursor: pointer;
   transition: margin 700ms;
 }
+#form-fields {
+  display: flex;
+  flex-wrap: wrap;
+}
 .field {
   cursor: pointer;
   padding: 20px;
-  border: 1px solid white;
   margin-bottom: 5px;
 }
 .field input {
   font-size: 30px;
   padding: 5px;
+  border: 5px solid #999;
 }
 .field input.correct {
   color: green;
@@ -49,6 +54,11 @@ h2 {
 .field input.incorrect {
   color: red;
   border: 5px solid red;
+}
+.repeat {
+  font-size: 50px;
+  color: white;
+  padding: 0 10px;
 }
 #results {
   display: flex;

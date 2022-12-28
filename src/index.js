@@ -59,7 +59,7 @@
 
       $('#complete').style.marginRight = 0;
       $('#complete').innerHTML = '<img src="https://i.giphy.com/media/7frSUXgbGqQPKNnJRS/giphy.webp" onclick="clearCelebration()" />'
-      window.speak("You are so awesome, great job. Now let's dance. wop wop wop wop wop wop wop wop wop, oh yeah. Woo woooooo wooo woooooo. Get down get down");
+      window.speak("You are so awesome, great job. Now let's dance. wop wop wop wop wop wop wop wop wop");
     }
   }
 
@@ -68,7 +68,9 @@
       wordToId(word)
     }" type="text" onfocus="speak('${
       word
-    }')" onblur="updateResults()" /></div>`
+    }')" onblur="updateResults()" /><span class="repeat" onclick="speak('${
+      word
+    }')">↻</span></div>`
   ).join('');
 
   const resultsHtml = Object.entries(spellingState).map(([word, count]) => `<div class="results-word"><h3>${word}</h3><span>${count}</span></div>`).join('');
