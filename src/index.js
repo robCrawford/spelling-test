@@ -14,11 +14,11 @@
   ];
 
   const year3 = [
-    "across", "almost", "along", "animal", "around", "balloon", "beautiful", "began", "being", "below", "better", "birthday", "break", "brother", "brought", "can't", "change", "child", "Christmas", "clothes", "cold", "coming", "didn't", "does", "door", "during", "eyes", "father", "follow", "found", "garden", "goes", "gold", "gone", "grass", "half", "happy", "head", "high", "hour", "important", "improve", "inside", "jumped", "knew", "lady", "leave", "light", "might", "mind", "money", "morning", "move", "much", "near", "never", "number", "opened", "outside", "own", "paper", "parents", "place", "pretty", "prove", "right", "round", "second", "show", "sister", "something", "sometimes", "sound", "started", "still", "stopped", "such", "sugar", "sure", "swimming", "today", "told", "tries", "turn", "upon", "used", "walk", "watch", "water", "while", "white", "whole", "why", "window", "without", "woke", "woken", "word", "world", "write", "year", "yellow"
+    'across', 'almost', 'along', 'animal', 'around', 'balloon', 'beautiful', 'began', 'being', 'below', 'better', 'birthday', 'break', 'brother', 'brought', 'change', 'child', 'Christmas', 'clothes', 'cold', 'coming', 'does', 'door', 'during', 'eyes', 'father', 'follow', 'found', 'garden', 'goes', 'gold', 'gone', 'grass', 'half', 'happy', 'head', 'high', 'hour', 'important', 'improve', 'inside', 'jumped', 'knew', 'lady', 'leave', 'light', 'might', 'mind', 'money', 'morning', 'move', 'much', 'near', 'never', 'number', 'opened', 'outside', 'own', 'paper', 'parents', 'place', 'pretty', 'prove', 'right', 'round', 'second', 'show', 'sister', 'something', 'sometimes', 'sound', 'started', 'still', 'stopped', 'such', 'sugar', 'sure', 'swimming', 'today', 'told', 'tries', 'turn', 'upon', 'used', 'walk', 'watch', 'water', 'while', 'white', 'whole', 'why', 'window', 'without', 'woke', 'woken', 'word', 'world', 'write', 'year', 'yellow'
   ];
 
   const year4 = [
-    "accidentally", "actually", "occasionally", "probably", "knowledge", "knowledgeable", "words", "mention", "occasion", "position", "possession", "question", "possess", "caught", "naughty", "eighth", "reign", "weight", "height", "therefore", "famous", "various", "possible", "enough", "bicycle", "business", "disappear", "disbelieve", "rebuild", "reposition", "favourite", "interest", "library", "ordinary", "separate", "address", "appear", "arrive", "difficult", "opposite", "pressure", "suppose", "decide", "describe", "extreme", "guide", "surprise", "earth", "fruit", "heart", "history", "increase", "minute", "natural", "quarter", "regular", "material", "experiment", "length", "center", "century", "certain", "circle", "exercise", "experience", "medicine", "notice", "recent", "answer", "breath", "breathe", "build", "calendar", "complete", "consider", "continue", "early", "group", "guard", "forwards", "heard", "imagine", "island", "learn", "often", "particular", "peculiar", "perhaps", "popular", "potatoes", "promise", "purpose", "remember", "centered", "straight", "strange", "strength", "woman", "women"
+    'accidentally', 'actually', 'occasionally', 'probably', 'knowledge', 'knowledgeable', 'words', 'mention', 'occasion', 'position', 'possession', 'question', 'possess', 'caught', 'naughty', 'eighth', 'reign', 'weight', 'height', 'therefore', 'famous', 'various', 'possible', 'enough', 'bicycle', 'business', 'disappear', 'disbelieve', 'rebuild', 'reposition', 'favourite', 'interest', 'library', 'ordinary', 'separate', 'address', 'appear', 'arrive', 'difficult', 'opposite', 'pressure', 'suppose', 'decide', 'describe', 'extreme', 'guide', 'surprise', 'earth', 'fruit', 'heart', 'history', 'increase', 'minute', 'natural', 'quarter', 'regular', 'material', 'experiment', 'length', 'center', 'century', 'certain', 'circle', 'exercise', 'experience', 'medicine', 'notice', 'recent', 'answer', 'breath', 'breathe', 'build', 'calendar', 'complete', 'consider', 'continue', 'early', 'group', 'guard', 'forwards', 'heard', 'imagine', 'island', 'learn', 'often', 'particular', 'peculiar', 'perhaps', 'popular', 'potatoes', 'promise', 'purpose', 'remember', 'centered', 'straight', 'strange', 'strength', 'woman', 'women'
   ];
 
   const allWords = [...year2, ...year3, ...year4];
@@ -95,9 +95,11 @@
       document.activeElement.blur();
     }
   });
+
   document.addEventListener('contextmenu', e => {
     e.preventDefault();
   });
+
   if (/results/i.test(location.search)) {
     $('#results-title').style.display = 'block';
     $('#results').style.display = 'flex';
