@@ -103,6 +103,7 @@
   if (/results/i.test(location.search)) {
     $('#results-title').style.display = 'block';
     $('#results').style.display = 'flex';
+    $('#results-link').style.display = 'none';
   }
 
 }());
