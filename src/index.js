@@ -6,7 +6,8 @@
   const config = {
     stateName: 'spelling-state',
     fieldCount: 10,
-    completedCount: 5
+    completedCount: 5,
+    hintCount: 5
   };
 
   const year2 = [
@@ -38,11 +39,26 @@
 
   const wordToId = word => word.replace(/[^\w]/g, '');
 
-  window.speak = text => {
+  window.speak = (word, isRepeat) => {
     if ('speechSynthesis' in window) {
       var msg = new SpeechSynthesisUtterance();
-      msg.text = text;
+      msg.text = word;
       window.speechSynthesis.speak(msg);
+
+      if (isRepeat) {
+        const fnHandle = window.speak;
+        const countEntry = fnHandle[word];
+        fnHandle[word] = (countEntry || 1) + 1;
+
+        if (countEntry >= config.hintCount) {
+          fnHandle[word] = 0;
+          const input = $(`#${wordToId(word)}`);
+          input.placeholder = word;
+          setTimeout(() => {
+            input.placeholder = '';
+          }, 300);
+        }
+      }
     } else {
       alert("Sorry, your browser doesn't support speech synthesis!");
     }
@@ -82,7 +98,7 @@
       word
     }')" onblur="updateResults()" /><span class="repeat" onclick="speak('${
       word
-    }')">↻</span></div>`
+    }', true)">↻</span></div>`
   ).join('');
 
   const resultsHtml = Object.entries(spellingState).map(([word, count]) => `<div class="results-word"><h3>${word}</h3><span>${count}</span></div>`).join('');
