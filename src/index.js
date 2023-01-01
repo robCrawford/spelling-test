@@ -74,7 +74,7 @@
       const isCorrect = answer === word;
       if (input.value) {
         input.className = isCorrect ? 'correct' : 'incorrect';
-        if (!isCorrect && word.toLowerCase() === answer) {
+        if (!isCorrect && word.toLowerCase() === answer.toLowerCase()) {
           const prevValue = input.value;
           setTimeout(() => { input.value = word; }, 500);
           setTimeout(() => { input.value = prevValue; }, 800);
@@ -99,7 +99,7 @@
   const fieldsHtml = words.map((word, i) =>
     `<div class="field"><input id="${
       wordToId(word)
-    }" type="text" onfocus="speak('${
+    }" type="text" autocorrect="off" autocapitalize="off" onfocus="speak('${
       word
     }')" onblur="updateResults()" /><span class="repeat" onclick="speak('${
       word
