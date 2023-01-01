@@ -53,10 +53,9 @@
         if (countEntry >= config.hintCount) {
           fnHandle[word] = 0;
           const input = $(`#${wordToId(word)}`);
-          input.placeholder = word;
-          setTimeout(() => {
-            input.placeholder = '';
-          }, 300);
+          input.value = '';
+          setTimeout(() => { input.value = word }, 500);
+          setTimeout(() => { input.value = '' }, 800);
         }
       }
     } else {
@@ -91,7 +90,7 @@
       })
       localStorage.setItem(config.stateName, JSON.stringify(spellingState));
 
-      $('#complete-overlay').innerHTML = '<img src="img/sloth.webp" onclick="clearComplete()" />'
+      $('#complete-overlay').style.display = 'block';
       window.speak("Awesome job! Wop wop wop wop wop wop wop wop wop wop wop wop");
       setTimeout(clearComplete, 5000);
     }
