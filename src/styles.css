@@ -62,16 +62,25 @@ a {
   color: white;
   padding: 0 10px;
 }
+#results-link {
+  cursor: pointer;
+  color: white;
+  font-size: 13px;
+}
 #results-title {
   display: none;
   font-weight: normal;
   color: white;
 }
+#results-title span {
+  cursor: pointer;
+  color: white;
+  font-size: 13px;
+}
 #results {
   display: none;
   flex-wrap: wrap;
 }
-
 .results-word {
   background: white;
   color: green;

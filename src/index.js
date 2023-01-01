@@ -85,7 +85,7 @@
       })
       localStorage.setItem(config.stateName, JSON.stringify(spellingState));
 
-      $('#complete-overlay').innerHTML = '<img src="https://i.giphy.com/media/7frSUXgbGqQPKNnJRS/giphy.webp" onclick="clearComplete()" />'
+      $('#complete-overlay').innerHTML = '<img src="img/sloth.webp" onclick="clearComplete()" />'
       window.speak("Awesome job! Wop wop wop wop wop wop wop wop wop wop wop wop");
       setTimeout(clearComplete, 5000);
     }
@@ -103,8 +103,21 @@
 
   const resultsHtml = Object.entries(spellingState).map(([word, count]) => `<div class="results-word"><h3>${word}</h3><span>${count}</span></div>`).join('');
 
-  $('#form-fields').innerHTML = (fieldsHtml);
-  $('#results').innerHTML = (resultsHtml);
+  $('#form-fields').innerHTML = fieldsHtml;
+  $('#results').innerHTML = resultsHtml;
+
+  $('#results-link').onclick = () => {
+    updateResultsUI(true);
+  };
+  $('#results-title').onclick = () => {
+    updateResultsUI(false);
+  };
+
+  function updateResultsUI(showResults) {
+    $('#results-title').style.display = showResults ? 'block' : 'none';
+    $('#results').style.display = showResults ? 'flex' : 'none';
+    $('#results-link').style.display = showResults ? 'none' : 'block';
+  }
 
   document.addEventListener("keyup", e => {
     if(e.key === 'Enter') {
@@ -115,11 +128,5 @@
   document.addEventListener('contextmenu', e => {
     e.preventDefault();
   });
-
-  if (/results/i.test(location.search)) {
-    $('#results-title').style.display = 'block';
-    $('#results').style.display = 'flex';
-    $('#results-link').style.display = 'none';
-  }
 
 }());
