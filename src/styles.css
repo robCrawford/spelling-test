@@ -34,10 +34,16 @@ a {
   bottom: 0;
   min-height: 100%;
   background: url("img/sloth.webp");
-  background-size: cover;
+  background-color: #222;
+  background-size: contain;
   background-repeat: no-repeat;
   background-position: center center;
   cursor: pointer;
+}
+@media only screen and (max-width: 600px) {
+  #complete-overlay {
+    background-size: cover;
+  }
 }
 #complete-overlay img {
   width: 100%;
