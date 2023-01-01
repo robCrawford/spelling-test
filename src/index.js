@@ -71,9 +71,15 @@
   window.updateResults = () => {
     const isComplete = words.reduce((allCorrect, word) => {
       const input = $(`#${wordToId(word)}`);
-      const isCorrect = input?.value.trim() === word;
+      const answer = input?.value.trim();
+      const isCorrect = answer === word;
       if (input.value) {
         input.className = isCorrect ? 'correct' : 'incorrect';
+        if (!isCorrect && word.toLowerCase() === answer) {
+          const prevValue = input.value;
+          setTimeout(() => { input.value = word; }, 500);
+          setTimeout(() => { input.value = prevValue; }, 800);
+        }
       }
       return allCorrect && isCorrect;
     }, true);
