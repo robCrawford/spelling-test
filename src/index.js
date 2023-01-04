@@ -6,8 +6,9 @@
   const config = {
     stateName: 'spelling-state',
     fieldCount: 10,
-    completedCount: 5,
-    hintCount: 5
+    completedWordCount: 5,
+    hintCount: 5,
+    completedFieldsReward: .5
   };
 
   const year2 = [
@@ -24,7 +25,11 @@
 
   const allWords = [...year2, ...year3, ...year4];
   const spellingState = JSON.parse(localStorage.getItem(config.stateName) || '{}');
-  const incompleteWords = allWords.filter(word => !((spellingState[word] || 0) >= config.completedCount));
+  const incompleteWords = allWords.filter(word => !((spellingState[word] || 0) >= config.completedWordCount));
+
+  // Rewards
+  const completedFieldsCount = Object.values(spellingState).reduce((acc, count) => acc + count, 0) / config.fieldCount;
+  const rewardAmount = `🌟 ${(completedFieldsCount * config.completedFieldsReward).toFixed(2)}`;
 
   let shuffledWords = incompleteWords
     .map(value => ({ value, sort: Math.random() }))
@@ -71,14 +76,15 @@
     const isComplete = words.reduce((allCorrect, word) => {
       const input = $(`#${wordToId(word)}`);
       const answer = input?.value.trim();
-      const isCorrect = answer === word;
+      let isCorrect = answer === word;
+
       if (input.value) {
-        input.className = isCorrect ? 'correct' : 'incorrect';
-        if (!isCorrect && word.toLowerCase() === answer.toLowerCase()) {
-          const prevValue = input.value;
-          setTimeout(() => { input.value = word; }, 500);
-          setTimeout(() => { input.value = prevValue; }, 800);
+        // Auto correct case
+        if (!isCorrect && answer.toLowerCase() === word.toLowerCase()) {
+          input.value = word;
+          isCorrect = true;
         }
+        input.className = isCorrect ? 'correct' : 'incorrect';
       }
       return allCorrect && isCorrect;
     }, true);
@@ -110,7 +116,7 @@
 
   $('#form-fields').innerHTML = fieldsHtml;
   $('#results').innerHTML = resultsHtml;
-
+  $('#rewards').innerHTML = rewardAmount;
   $('#results-link').onclick = () => {
     updateResultsUI(true);
   };

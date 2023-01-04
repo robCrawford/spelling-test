@@ -1,3 +1,12 @@
+@keyframes bounce {
+  0%   { transform: scale(1,1)      translateY(0); }
+  10%  { transform: scale(1.1,.9)   translateY(0); }
+  30%  { transform: scale(.9,1.1)   translateY(-150px); }
+  50%  { transform: scale(1.05,.95) translateY(0); }
+  57%  { transform: scale(1,1)      translateY(-7px); }
+  64%  { transform: scale(1,1)      translateY(0); }
+  100% { transform: scale(1,1)      translateY(0); }
+}
 body {
   position: relative;
   height: 100vh;
@@ -19,6 +28,14 @@ h1 {
   font-weight: normal;
   color: white;
   margin: 30px 20px;
+}
+#rewards {
+  float: right;
+  margin-right: 5px;
+  font-size: 30px;
+  line-height: 75px;
+  color: white;
+  animation: bounce 0.6s ease-out 1;
 }
 a {
   color: white;
