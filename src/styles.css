@@ -24,14 +24,21 @@ body {
   background: #999;
 }
 h1 {
+  display: inline-block;
   font-size: 50px;
   font-weight: normal;
   color: white;
-  margin: 30px 20px;
+  margin: 30px 10px 30px 20px;
+}
+#help-icon {
+  display: inline-block;
+  font-size: 50px;
 }
 #rewards {
   float: right;
-  margin-right: 5px;
+  position: absolute;
+  top: 50px;
+  right: 45px;
   font-size: 30px;
   line-height: 75px;
   color: white;
@@ -48,6 +55,7 @@ a {
   right: 0;
   top: 0;
   bottom: 0;
+  z-index: 10;
   min-height: 100%;
   background: url("img/sloth.webp");
   background-color: #222;
@@ -86,7 +94,7 @@ a {
 .repeat {
   font-size: 50px;
   color: white;
-  padding: 0 10px;
+  padding: 0 0 0 10px;
 }
 #results-link {
   cursor: pointer;
@@ -127,15 +135,70 @@ a {
   padding: 0 10px;
 }
 
-@media only screen and (max-width: 600px) {
+.tooltip {
+  cursor: pointer;
+  position:relative;
+}
+.tooltip .balloon {
+  min-width:200px;
+  top:56px;
+  left:50%;
+  transform:translate(-50%, 0);
+  padding:10px 20px;
+  color:#666666;
+  background-color:#EEEEEE;
+  font-weight:normal;
+  font-size:13px;
+  border-radius:8px;
+  position:absolute;
+  z-index:1;
+  box-sizing:border-box;
+  box-shadow:0 1px 8px rgba(0,0,0,0.5);
+  display:none;
+}
+.tooltip .balloon p {
+  padding: 0;
+  margin: 0 0 5px;
+}
+.tooltip:hover .balloon {
+  display:block;
+}
+.tooltip .balloon i {
+  position:absolute;
+  bottom:100%;
+  left:50%;
+  margin-left:-12px;
+  width:24px;
+  height:12px;
+  overflow:hidden;
+}
+.tooltip .balloon i::after {
+  content:'';
+  position:absolute;
+  width:12px;
+  height:12px;
+  left:50%;
+  transform:translate(-50%,50%) rotate(45deg);
+  background-color:#EEEEEE;
+  box-shadow:0 1px 8px rgba(0,0,0,0.5);
+}
+
+@media only screen and (max-width: 630px) {
+  #help-icon {
+    display: none;
+  }
+  h1 {
+    font-size: 45px;
+  }
+  #rewards {
+    line-height: 67px;
+    right: 35px;
+  }
   #complete-overlay {
     background-size: cover;
   }
   .field {
     width: 90%;
     padding-left: 20px;
-  }
-  .field input {
-    width: 220px;
   }
 }

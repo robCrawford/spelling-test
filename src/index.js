@@ -1,5 +1,6 @@
 (function() {
   const $ = selector => document.querySelector(selector);
+  window.scrollTo(0, 0);
 
   let completed = false;
 
@@ -8,8 +9,10 @@
     fieldCount: 10,
     completedWordCount: 5,
     hintCount: 5,
-    completedFieldsReward: .5
+    completedFieldsReward: .5,
   };
+
+  const helpHtml = `<p>Completing all ${config.fieldCount} words earns ${config.completedFieldsReward.toFixed(2)} points!</p><p>A word hint will be shown in the field if you need to click repeat ${config.hintCount} times.</p>`;
 
   const year2 = [
     'about', 'above', 'after', 'again', 'although', 'always', 'another', 'ask', 'asked', 'baby', 'because', 'before', 'behind', 'between', 'both', 'call', 'called', 'children', 'climb', 'could', 'different', 'even', 'ever', 'every', 'everyone', 'everything', 'father', 'finally', 'friends', 'great', 'help', 'hide', 'house', 'know', 'large', 'last', 'little', 'looked', 'love', 'many', 'most', 'mother', 'Mr', 'Mrs', 'need', 'next', 'oh', 'once', 'only', 'other', 'our', 'over', 'people', 'please', 'really', 'school', 'should', 'small', 'suddenly', 'these', 'things', 'think', 'those', 'thought', 'thorough', 'time', 'together', 'under', 'until', 'very', 'where', 'which', 'work', 'would', 'year', 'young', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'
@@ -107,7 +110,7 @@
       wordToId(word)
     }" type="text" autocorrect="off" autocapitalize="off" onfocus="speak('${
       word
-    }')" onblur="updateResults()" /><span class="repeat" onclick="speak('${
+    }')" onblur="updateResults()" /><span title="repeat" class="repeat" onclick="speak('${
       word
     }', true)">↻</span></div>`
   ).join('');
@@ -117,6 +120,7 @@
   $('#form-fields').innerHTML = fieldsHtml;
   $('#results').innerHTML = resultsHtml;
   $('#rewards').innerHTML = rewardAmount;
+  $('#help-text').innerHTML = helpHtml;
   $('#results-link').onclick = () => {
     updateResultsUI(true);
   };
