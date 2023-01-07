@@ -42,10 +42,13 @@
   const words = shuffledWords.slice(0, config.fieldCount);
 
   if (!words.length) {
-    $('#title').innerHTML = "Congratulations 😊 <div>You have learned every word!! 😊😊😊</div>";
+    $('#title').innerHTML = "Congratulations!<div class='complete-message'>You have learned every word 😊😊😊</div>";
+    $('#rewards').style.top = 0;
+    $('#help-icon').style.display = 'none';
+    updateResultsUI(true, true);
   }
 
-  const wordToId = word => word.replace(/[^\w]/g, '');
+  const wordToId = word => `_${word.replace(/[^\w]/g, '')}_`;
 
   window.speak = (word, isRepeat) => {
     if ('speechSynthesis' in window) {
@@ -115,7 +118,7 @@
     }', true)">↻</span></div>`
   ).join('');
 
-  const resultsHtml = Object.entries(spellingState).map(([word, count]) => `<div class="results-word"><h3>${word}</h3><span>${count}</span></div>`).join('');
+  const resultsHtml = Object.entries(spellingState).map(([word, count]) => `<div class="results-word${count >= config.completedWordCount ? ' completed-word' : ''}"><h3>${word}</h3><span>${count}</span></div>`).join('');
 
   $('#form-fields').innerHTML = fieldsHtml;
   $('#results').innerHTML = resultsHtml;
@@ -128,8 +131,8 @@
     updateResultsUI(false);
   };
 
-  function updateResultsUI(showResults) {
-    $('#results-title').style.display = showResults ? 'block' : 'none';
+  function updateResultsUI(showResults, hideTitle) {
+    $('#results-title').style.display = showResults && !hideTitle ? 'block' : 'none';
     $('#results').style.display = showResults ? 'flex' : 'none';
     $('#results-link').style.display = showResults ? 'none' : 'block';
   }

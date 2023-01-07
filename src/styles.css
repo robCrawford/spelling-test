@@ -125,6 +125,10 @@ a {
   margin-right: 10px;
   margin-bottom: 10px;
 }
+.results-word.completed-word {
+  background: green;
+  color: white;
+}
 .results-word h3 {
   display: inline-block;
   font-weight: bold;
@@ -133,6 +137,9 @@ a {
 .results-word span {
   display: inline-block;
   padding: 0 10px;
+}
+.complete-message {
+  margin-bottom: 30px;
 }
 
 .tooltip {
