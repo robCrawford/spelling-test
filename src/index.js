@@ -14,6 +14,8 @@
 
   const helpHtml = `<p>Completing all ${config.fieldCount} words earns ${config.completedFieldsReward.toFixed(2)} points!</p><p>A word hint will be shown in the field if you need to click repeat ${config.hintCount} times.</p>`;
 
+  const adHocOverride = ['learn', 'guitar', 'guide', 'guidebook', 'guardian', 'guess', 'guest', 'guarantee'];
+
   const year2 = [
     'about', 'above', 'after', 'again', 'although', 'always', 'another', 'ask', 'asked', 'baby', 'because', 'before', 'behind', 'between', 'both', 'call', 'called', 'children', 'climb', 'could', 'different', 'even', 'ever', 'every', 'everyone', 'everything', 'father', 'finally', 'friends', 'great', 'help', 'hide', 'house', 'know', 'large', 'last', 'little', 'looked', 'love', 'many', 'most', 'mother', 'Mr', 'Mrs', 'need', 'next', 'oh', 'once', 'only', 'other', 'our', 'over', 'people', 'please', 'really', 'school', 'should', 'small', 'suddenly', 'these', 'things', 'think', 'those', 'thought', 'thorough', 'time', 'together', 'under', 'until', 'very', 'where', 'which', 'work', 'would', 'year', 'young', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'
   ];
@@ -26,7 +28,7 @@
     'accidentally', 'actually', 'occasionally', 'probably', 'knowledge', 'knowledgeable', 'words', 'mention', 'occasion', 'position', 'possession', 'question', 'possess', 'caught', 'naughty', 'eighth', 'reign', 'weight', 'height', 'therefore', 'famous', 'various', 'possible', 'enough', 'bicycle', 'business', 'disappear', 'disbelieve', 'rebuild', 'reposition', 'favourite', 'interest', 'library', 'ordinary', 'separate', 'address', 'appear', 'arrive', 'difficult', 'opposite', 'pressure', 'suppose', 'decide', 'describe', 'extreme', 'guide', 'surprise', 'earth', 'fruit', 'heart', 'history', 'increase', 'minute', 'natural', 'quarter', 'regular', 'material', 'experiment', 'length', 'center', 'century', 'certain', 'circle', 'exercise', 'experience', 'medicine', 'notice', 'recent', 'answer', 'breath', 'breathe', 'build', 'calendar', 'complete', 'consider', 'continue', 'early', 'group', 'guard', 'forwards', 'heard', 'imagine', 'island', 'learn', 'often', 'particular', 'peculiar', 'perhaps', 'popular', 'potatoes', 'promise', 'purpose', 'remember', 'centered', 'straight', 'strange', 'strength', 'woman', 'women'
   ];
 
-  const allWords = [...year2, ...year3, ...year4];
+  const allWords = adHocOverride.length ? adHocOverride : [...year2, ...year3, ...year4];
   const spellingState = JSON.parse(localStorage.getItem(config.stateName) || '{}');
   const incompleteWords = allWords.filter(word => !((spellingState[word] || 0) >= config.completedWordCount));
 
