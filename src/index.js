@@ -15,7 +15,14 @@
   const helpHtml = `<p>Completing all ${config.fieldCount} words earns ${config.completedFieldsReward.toFixed(2)} points!</p><p>A word hint will be shown in the field if you need to click repeat ${config.hintCount} times.</p>`;
 
   // Entries here will be the only words tested
-  const tempOverrideWords = [];
+  let tempOverrideWords = [];
+
+  // Double click page title to enter overrides into localStorage
+  const overridesKey = `${config.stateName}-overrides`;
+  const storedOverrides = (localStorage.getItem(overridesKey) || '').replace(/,\s*/g, '|').split('|').filter(Boolean);
+  if (storedOverrides.length) {
+    tempOverrideWords = storedOverrides;
+  }
 
   const additionalWords = ["guitar", "guide", "guidebook", "guardian", "guess", "guest", "guarantee"];
 
@@ -31,14 +38,10 @@
     "accidentally", "actually", "occasionally", "probably", "knowledge", "knowledgeable", "words", "mention", "occasion", "position", "possession", "question", "possess", "caught", "naughty", "eighth", "reign", "weight", "height", "therefore", "famous", "various", "possible", "enough", "bicycle", "business", "disappear", "disbelieve", "rebuild", "reposition", "favourite", "interest", "library", "ordinary", "separate", "address", "appear", "arrive", "difficult", "opposite", "pressure", "suppose", "decide", "describe", "extreme", "guide", "surprise", "earth", "fruit", "heart", "history", "increase", "minute", "natural", "quarter", "regular", "material", "experiment", "length", "center", "century", "certain", "circle", "exercise", "experience", "medicine", "notice", "recent", "answer", "breath", "breathe", "build", "calendar", "complete", "consider", "continue", "early", "group", "guard", "forwards", "heard", "imagine", "island", "learn", "often", "particular", "peculiar", "perhaps", "popular", "potatoes", "promise", "purpose", "remember", "centered", "straight", "strange", "strength", "woman", "women"
   ];
 
-  const allWords = tempOverrideWords.length ? tempOverrideWords : [...year2, ...year3, ...year4, ...additionalWords];
+  // Words
+  const allWords = deduplicate(tempOverrideWords.length ? tempOverrideWords : [...year2, ...year3, ...year4, ...additionalWords]);
   const spellingState = JSON.parse(localStorage.getItem(config.stateName) || '{}');
   const incompleteWords = allWords.filter(word => !((spellingState[word] || 0) >= config.completedWordCount));
-
-  const round = (value, step = 1) => {
-    var inv = 1.0 / step;
-    return Math.round(value * inv) / inv;
-  }
 
   // Rewards
   const completedFieldsCount = Object.values(spellingState).reduce((acc, count) => acc + count, 0) / config.fieldCount;
@@ -145,6 +148,16 @@
   $('#results-title').onclick = () => {
     updateResultsUI(false);
   };
+  $('#title').ondblclick = () => {
+    const overrides = prompt('Words override list (comma separated, leave empty to clear!)');
+    if (overrides) {
+      localStorage.setItem(overridesKey, overrides);
+    }
+    else {
+      localStorage.removeItem(overridesKey);
+    }
+    location.reload();
+  }
 
   function updateResultsUI(showResults, hideTitle) {
     $('#results-title').style.display = showResults && !hideTitle ? 'block' : 'none';
@@ -152,6 +165,7 @@
     $('#results-link').style.display = showResults ? 'none' : 'block';
   }
 
+  // Listeners
   document.addEventListener("keyup", e => {
     if(e.key === 'Enter') {
       document.activeElement.blur();
@@ -161,5 +175,15 @@
   document.addEventListener('contextmenu', e => {
     e.preventDefault();
   });
+
+  // Utils
+  function deduplicate(array) {
+    return [...new Set(array)];
+  }
+
+  function round(value, step = 1) {
+    var inv = 1.0 / step;
+    return Math.round(value * inv) / inv;
+  }
 
 }());
