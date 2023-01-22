@@ -117,7 +117,7 @@
 
       $('#complete-overlay').style.display = 'block';
       window.speak("Awesome job! Wop wop wop wop wop wop wop wop wop wop wop wop");
-      setTimeout(clearComplete, 5000);
+      setTimeout(clearComplete, 4600);
     }
   }
 
@@ -125,6 +125,12 @@
     `<div class="field"><input id="${wordToId(word)}" type="text" autocorrect="off" autocapitalize="off" /><span title="repeat" class="repeat">↻</span></div>`
   ).join('');
 
+  const resultsHtml = Object.entries(spellingState).map(([word, count]) => {
+    const displayWord = /~/.test(word) ? `<s>${word.split('~')[0]}</s>` : word;
+    return `<div class="results-word${count >= config.completedWordCount ? ' completed-word' : ''}"><h3 id="result-${wordToId(word)}">${displayWord}</h3><span>${count}</span></div>`
+}).join('');
+
+  // DOM elements
   setTimeout(() => {
     words.forEach((word) => {
       const fieldEl = $(`#${wordToId(word)}`);
@@ -134,9 +140,20 @@
       const repeatEl = $(`#${wordToId(word)} + .repeat`);
       repeatEl.onclick = () => speak(word, true);
     });
-  });
 
-  const resultsHtml = Object.entries(spellingState).map(([word, count]) => `<div class="results-word${count >= config.completedWordCount ? ' completed-word' : ''}"><h3>${word}</h3><span>${count}</span></div>`).join('');
+    // Retest word
+    Object.keys(spellingState).forEach((word) => {
+      const resultEl = $(`#result-${wordToId(word)}`);
+      resultEl.ondblclick = () => {
+        if (confirm(`Retest "${word}"?`)) {
+          spellingState[`${word}~${Date.now()}`] = spellingState[word];
+          delete spellingState[word];
+          localStorage.setItem(config.stateName, JSON.stringify(spellingState));
+          location.reload();
+        }
+      }
+    });
+  });
 
   $('#form-fields').innerHTML = fieldsHtml;
   $('#results').innerHTML = resultsHtml;
@@ -149,14 +166,16 @@
     updateResultsUI(false);
   };
   $('#title').ondblclick = () => {
-    const overrides = prompt('Words override list (comma separated, leave empty to clear!)');
-    if (overrides) {
-      localStorage.setItem(overridesKey, overrides);
+    const overrides = prompt('Words override list (comma separated, leave empty to clear!)', storedOverrides);
+    if (overrides !== null) { // Cancel
+      if (overrides) {
+        localStorage.setItem(overridesKey, overrides);
+      }
+      else {
+        localStorage.removeItem(overridesKey);
+      }
+      location.reload();
     }
-    else {
-      localStorage.removeItem(overridesKey);
-    }
-    location.reload();
   }
 
   function updateResultsUI(showResults, hideTitle) {
@@ -165,7 +184,6 @@
     $('#results-link').style.display = showResults ? 'none' : 'block';
   }
 
-  // Listeners
   document.addEventListener("keyup", e => {
     if(e.key === 'Enter') {
       document.activeElement.blur();
