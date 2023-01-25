@@ -14,13 +14,14 @@ body {
   padding: 0;
   margin: 0;
   font: 12px "HelveticaNeue-Light", sans-serif;
-  background: #444;
+  background-color: #333;
 }
 #main {
   position: relative;
   max-width: 850px;
+  min-height: 100%;
   margin: 0 auto;
-  padding: 20px;
+  padding: 0 20px;
   background: #999;
 }
 h1 {
@@ -28,12 +29,14 @@ h1 {
   font-size: 50px;
   font-weight: normal;
   color: white;
-  margin: 30px 10px 30px 20px;
+  margin: 50px 10px 30px 20px;
 }
 #title {
   cursor: crosshair;
 }
 #help-icon {
+  position: relative;
+  top: 10px;
   display: inline-block;
   font-size: 50px;
 }
@@ -65,7 +68,6 @@ a {
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center center;
-  cursor: pointer;
 }
 #complete-overlay img {
   width: 100%;
@@ -83,7 +85,7 @@ a {
 .field input {
   font-size: 30px;
   padding: 5px;
-  border: 5px solid #999;
+  border: 5px solid rgb(165, 163, 147);
   width: 74%;
 }
 .field input.correct {
@@ -152,7 +154,7 @@ a {
 }
 .tooltip .balloon {
   min-width:200px;
-  top:56px;
+  top:66px;
   left:50%;
   transform:translate(-50%, 0);
   padding:10px 20px;
