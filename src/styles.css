@@ -21,7 +21,7 @@ body {
   max-width: 850px;
   min-height: 100%;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 30px 0 50px;
   background: #999;
 }
 h1 {
@@ -44,7 +44,7 @@ h1 {
   float: right;
   position: absolute;
   top: 50px;
-  right: 45px;
+  right: 70px;
   font-size: 30px;
   line-height: 75px;
   color: white;
@@ -147,6 +147,9 @@ a {
 .complete-message {
   margin-bottom: 30px;
 }
+.spacer {
+  height: 14px;
+}
 
 .tooltip {
   cursor: pointer;
@@ -173,8 +176,11 @@ a {
   padding: 0;
   margin: 0 0 5px;
 }
-.tooltip:hover .balloon {
-  display:block;
+/* when hover is supported */
+@media (hover: hover) {
+  .tooltip:hover .balloon {
+    display:block;
+  }
 }
 .tooltip .balloon i {
   position:absolute;
@@ -195,8 +201,14 @@ a {
   background-color:#EEEEEE;
   box-shadow:0 1px 8px rgba(0,0,0,0.5);
 }
+.tooltip .balloon.show {
+  display: block;
+}
 
 @media only screen and (max-width: 630px) {
+  #main {
+    padding: 0 15px;
+  }
   #help-icon {
     display: none;
   }
@@ -205,7 +217,7 @@ a {
   }
   #rewards {
     line-height: 67px;
-    right: 35px;
+    right: 32px;
   }
   #complete-overlay {
     background-size: cover;

@@ -140,9 +140,8 @@
       const repeatEl = $(`#${wordToId(word)} + .repeat`);
       repeatEl.onclick = () => speak(word, true);
     });
-    $('#help-icon').onclick = () => {
-      const balloon = $('.tooltip .balloon');
-      balloon.style.display = balloon.style.display === 'block' ? '' : 'block';
+    $('#help-icon').ontouchend = () => {
+      $('.tooltip .balloon').classList.toggle('show');
     };
 
     // Retest word
