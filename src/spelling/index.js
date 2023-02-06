@@ -3,14 +3,14 @@ import data from './data.js';
 
 export const spellingConfig = {
   stateName: 'spelling-state',
-  fieldCount: 10,
+  fieldCount: 14,
   completedWordCount: 5,
   hintCount: 5,
   completedFieldsReward: .5,
 };
 
 // Entries here will be the only words tested
-let tempOverrideWords = [];
+let tempOverrideWords = [ ...data.year2 ];
 
 const helpHtml = `<p>Completing all ${spellingConfig.fieldCount} words earns ${spellingConfig.completedFieldsReward.toFixed(2)} points!</p><p>A word hint will be shown in the field if you need to click repeat ${spellingConfig.hintCount} times.</p>`;
 
