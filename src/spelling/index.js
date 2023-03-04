@@ -10,7 +10,7 @@ export const spellingConfig = {
 };
 
 // Entries here will be the only words tested
-let tempOverrideWords = [ ...data.year2 ];
+let tempOverrideWords = [];
 
 const helpHtml = `<p>Completing all ${spellingConfig.fieldCount} words earns ${spellingConfig.completedFieldsReward.toFixed(2)} points!</p><p>A word hint will be shown in the field if you need to click repeat ${spellingConfig.hintCount} times.</p>`;
 
