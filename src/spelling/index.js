@@ -3,14 +3,23 @@ import data from './data.js';
 
 export const spellingConfig = {
   stateName: 'spelling-state',
-  fieldCount: 14,
-  completedWordCount: 5,
-  hintCount: 5,
+  fieldCount: 5,
+  completedWordCount: 10,
+  hintCount: 2,
   completedFieldsReward: .5,
+  redeemedKey: 'spelling-redeemed'
 };
 
 // Entries here will be the only words tested
-let tempOverrideWords = [];
+// NOTE: update fieldCount for rewards calculation!
+let tempOverrideWords = ['bike', 'time', 'bone', 'note', 'home'];
+
+// Clear local storage prior to latest valid key
+const validDataSetKey = 'spelling-06-2024';
+if (!localStorage.getItem(validDataSetKey)) {
+  localStorage.clear();
+  localStorage.setItem(validDataSetKey, true);
+}
 
 const helpHtml = `<p>Completing all ${spellingConfig.fieldCount} words earns ${spellingConfig.completedFieldsReward.toFixed(2)} points!</p><p>A word hint will be shown in the field if you need to click repeat ${spellingConfig.hintCount} times.</p>`;
 
@@ -26,17 +35,16 @@ export function initSpelling() {
 
   // Words
   const allWords = deduplicate(tempOverrideWords.length ? tempOverrideWords : [
-    ...data.year2,
-    ...data.year3,
-    ...data.year4,
-    ...data.additional
+    ...data.year1,
   ]);
   const spellingState = JSON.parse(localStorage.getItem(spellingConfig.stateName) || '{}');
   const incompleteWords = allWords.filter(word => !((spellingState[word] || 0) >= spellingConfig.completedWordCount));
 
   // Rewards
   const completedFieldsCount = Object.values(spellingState).reduce((acc, count) => acc + count, 0) / spellingConfig.fieldCount;
-  const rewardAmount = `🌟 ${(round(completedFieldsCount * spellingConfig.completedFieldsReward, spellingConfig.completedFieldsReward)).toFixed(2)}`;
+  const rewardTotal = round(completedFieldsCount * spellingConfig.completedFieldsReward, spellingConfig.completedFieldsReward);
+   const redeemedAmount = JSON.parse(localStorage.getItem(spellingConfig.redeemedKey) || 0);
+  const rewardAmount = `🌟 ${(rewardTotal - redeemedAmount).toFixed(2)}`;
 
   let shuffledWords = incompleteWords
     .map(value => ({ value, sort: Math.random() }))
@@ -77,7 +85,7 @@ export function initSpelling() {
       localStorage.setItem(spellingConfig.stateName, JSON.stringify(spellingState));
 
       $('#complete-overlay').style.display = 'block';
-      speak("Awesome job! Wop wop wop wop wop wop wop wop wop wop wop wop");
+      speak("Awesome job Livvy! You are rocking it! Go go go");
       setTimeout(clearComplete, 4600);
     }
   }
@@ -138,6 +146,14 @@ export function initSpelling() {
       else {
         localStorage.removeItem(overridesKey);
       }
+      location.reload();
+    }
+  }
+
+  $('#rewards').ondblclick = () => {
+    const redeem = confirm('Redeem all points?');
+    if (redeem) {
+      localStorage.setItem(spellingConfig.redeemedKey, rewardTotal);
       location.reload();
     }
   }
