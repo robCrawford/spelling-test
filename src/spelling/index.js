@@ -83,7 +83,7 @@ export function initSpelling() {
     };
   }
   else {
-    $('#title').innerHTML = `<input id="name-input" type="text" class="pulse-border" placeholder="Please enter your name and press enter!" />`;
+    $('#title').innerHTML = `<input id="name-input" type="text" class="pulse-border" placeholder="Enter your name!" />`;
     $('#name-input').focus();
     $('#name-input').onkeypress = (e) => {
       if (e.key === 'Enter') {
