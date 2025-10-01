@@ -6,7 +6,7 @@ export const spellingConfig = {
   fieldCount: 10,
   completedWordCount: 10,
   hintCount: 1,
-  completedFieldsReward: 0.2,
+  completedFieldsReward: 0.5,
   rewardsKey: 'spelling-rewards',
   redeemedKey: 'spelling-redeemed',
   nameKey: 'spelling-name'
@@ -26,7 +26,7 @@ if (!localStorage.getItem(validDataSetKey)) {
   localStorage.setItem(validDataSetKey, true);
 }
 
-const helpHtml = `<p>Completing all ${spellingConfig.fieldCount} words earns ${spellingConfig.completedFieldsReward.toFixed(2)} points!</p><p>A word hint will be shown in the field if the repeat icon is clicked${spellingConfig.hintCount > 1 ? `  ${spellingConfig.hintCount} times` : '' }.</p>`;
+const helpHtml = `<p>Completing all ${spellingConfig.fieldCount} words earns ${spellingConfig.completedFieldsReward} points!</p><p>A word hint will be shown in the field if the repeat icon is clicked${spellingConfig.hintCount > 1 ? `  ${spellingConfig.hintCount} times` : '' }.</p>`;
 
 export function initSpelling() {
   let completed = false;
@@ -72,14 +72,6 @@ export function initSpelling() {
   }
 
   // Name
-  $('#name-input').focus();
-  $('#name-input').onkeypress = (e) => {
-    if (e.key === 'Enter') {
-      const nameCased = $('#name-input').value.charAt(0).toUpperCase() + $('#name-input').value.slice(1);
-      localStorage.setItem(spellingConfig.nameKey, nameCased);
-      window.location.reload();
-    }
-  };
   name = localStorage.getItem(spellingConfig.nameKey);
   if (name) {
     $('#title').innerHTML = `Hi, ${name}!`;
@@ -90,6 +82,18 @@ export function initSpelling() {
       }
     };
   }
+  else {
+    $('#title').innerHTML = `<input id="name-input" type="text" class="pulse-border" placeholder="Please enter your name and press enter!" />`;
+    $('#name-input').focus();
+    $('#name-input').onkeypress = (e) => {
+      if (e.key === 'Enter') {
+         const nameCased = $('#name-input').value.charAt(0).toUpperCase() + $('#name-input').value.slice(1);
+         localStorage.setItem(spellingConfig.nameKey, nameCased);
+         window.location.reload();
+      }
+    };
+  }
+  $('#help-icon').style.display = 'inline-block';
 
   if (tempOverrideWords.length) {
     $('#title').setAttribute('title', 'Today\'s words: ' + tempOverrideWords.join(', '));

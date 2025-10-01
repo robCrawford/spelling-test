@@ -1,4 +1,4 @@
-const firstMultiplier = 1;
+const firstMultiplier = 2;
 const lastMultiplier = 12;
 
 export const numberWords = [
