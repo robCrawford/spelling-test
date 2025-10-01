@@ -8,8 +8,11 @@ export const spellingConfig = {
   hintCount: 1,
   completedFieldsReward: 0.2,
   rewardsKey: 'spelling-rewards',
-  redeemedKey: 'spelling-redeemed'
+  redeemedKey: 'spelling-redeemed',
+  nameKey: 'spelling-name'
 };
+
+let name = '';
 
 // Entries here will be the only words tested
 // NOTE: update fieldCount for rewards calculation!
@@ -68,6 +71,30 @@ export function initSpelling() {
     updateResultsUI(true, true);
   }
 
+  // Name
+  $('#name-input').focus();
+  $('#name-input').onkeypress = (e) => {
+    if (e.key === 'Enter') {
+      const nameCased = $('#name-input').value.charAt(0).toUpperCase() + $('#name-input').value.slice(1);
+      localStorage.setItem(spellingConfig.nameKey, nameCased);
+      window.location.reload();
+    }
+  };
+  name = localStorage.getItem(spellingConfig.nameKey);
+  if (name) {
+    $('#title').innerHTML = `Hi, ${name}!`;
+    $('#title').onclick = () => {
+      if (confirm('reset name?')) {
+        localStorage.removeItem(spellingConfig.nameKey);
+        window.location.reload();
+      }
+    };
+  }
+
+  if (tempOverrideWords.length) {
+    $('#title').setAttribute('title', 'Today\'s words: ' + tempOverrideWords.join(', '));
+  }
+
   function updateResults() {
     const isComplete = words.reduce((allCorrect, word) => {
       const input = $(`#${wordToId(word)}`);
@@ -94,7 +121,7 @@ export function initSpelling() {
       localStorage.setItem(spellingConfig.rewardsKey, round(rewardsTotal + spellingConfig.completedFieldsReward, spellingConfig.completedFieldsReward));
 
       $('#complete-overlay').style.display = 'block';
-      speak("Awesome job! You are rocking it! Go go go");
+      speak(`Awesome job ${name}! You are rocking it! Go go go`);
       setTimeout(clearComplete, 3500);
     }
   }
@@ -146,7 +173,7 @@ export function initSpelling() {
   $('#results-title').onclick = () => {
     updateResultsUI(false);
   };
-  $('#title').ondblclick = () => {
+  $('#help-icon').ondblclick = () => {
     const overrides = prompt('Words override list (comma separated, leave empty to clear!)', storedOverrides);
     if (overrides !== null) { // Cancel
       if (overrides) {
