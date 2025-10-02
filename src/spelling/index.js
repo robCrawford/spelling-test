@@ -83,15 +83,19 @@ export function initSpelling() {
     };
   }
   else {
-    $('#title').innerHTML = `<input id="name-input" type="text" class="pulse-border" placeholder="Enter your name!" />`;
-    $('#name-input').focus();
-    $('#name-input').onkeypress = (e) => {
-      if (e.key === 'Enter') {
-         const nameCased = $('#name-input').value.charAt(0).toUpperCase() + $('#name-input').value.slice(1);
-         localStorage.setItem(spellingConfig.nameKey, nameCased);
-         window.location.reload();
-      }
-    };
+    // Dont run for @media only screen and (max-width: 630px) {
+    if (!window.matchMedia('(max-width: 630px)').matches) {
+      console.log('this ran');
+      $('#title').innerHTML = `<input id="name-input" type="text" class="pulse-border" placeholder="Enter your name!" />`;
+      $('#name-input').focus();
+      $('#name-input').onkeypress = (e) => {
+        if (e.key === 'Enter') {
+          const nameCased = $('#name-input').value.charAt(0).toUpperCase() + $('#name-input').value.slice(1);
+          localStorage.setItem(spellingConfig.nameKey, nameCased);
+          window.location.reload();
+        }
+      };
+    }
   }
   $('#help-icon').style.display = 'inline-block';
 

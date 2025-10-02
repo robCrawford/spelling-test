@@ -43,11 +43,6 @@ body {
   width: 300px;
   vertical-align: middle;
 }
-@media only screen and (max-width: 630px) {
-  #name-input {
-    width: 128px;
-  }
-}
 
 h1 {
   display: inline-block;
@@ -186,22 +181,33 @@ a {
   #main {
     padding: 0 15px;
   }
-  #help-icon {
+  #title {
     display: none;
   }
-  h1 {
-    font-size: 45px;
+  #nav {
+    padding-left: 10px;
   }
   #rewards {
+    margin-top: -63px;
+    margin-right: -12px;
+    font-size: 24px;
     line-height: 67px;
     right: 32px;
   }
   #complete-overlay {
     background-size: cover;
   }
+  .multiplication #form-fields {
+    padding-top: 18px;
+  }
+  .tooltip .balloon.show {
+    margin-left: 80px;
+  }
+  .tooltip .balloon i {
+    left:16%;
+  }
 }
 
-/* input needing attention */
 .pulse-border {
   border: 5px solid #FFD93B; /* yellow */
   border-radius: 6px;
