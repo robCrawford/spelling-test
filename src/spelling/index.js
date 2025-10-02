@@ -72,7 +72,7 @@ export function initSpelling() {
   }
 
   // Name
-  name = localStorage.getItem(spellingConfig.nameKey);
+  name = localStorage.getItem(spellingConfig.nameKey) || '';
   if (name) {
     $('#title').innerHTML = `Hi, ${name}!`;
     $('#title').onclick = () => {
@@ -153,7 +153,7 @@ export function initSpelling() {
       const repeatEl = $(`#${wordToId(word)} + .repeat`);
       repeatEl.onclick = () => speak(word, true);
     });
-    $('#help-icon').ontouchend = () => {
+    $('#help-icon').onclick = () => {
       $('.tooltip .balloon').classList.toggle('show');
     };
 

@@ -48,7 +48,7 @@ export function initMultiplication() {
   const rewardsText = `🌟 ${(rewardsDisplayAmount).toFixed(2)}`;
 
   // Name
-  name = localStorage.getItem(multiplicationConfig.nameKey);
+  name = localStorage.getItem(multiplicationConfig.nameKey) || '';
   if (name) {
     $('#title').innerHTML = `Hi, ${name}!`;
     $('#title').onclick = () => {
@@ -219,7 +219,7 @@ export function initMultiplication() {
         }
       }
     });
-    $('#help-icon').ontouchend = () => {
+    $('#help-icon').onclick = () => {
       $('.tooltip .balloon').classList.toggle('show');
     };
 
