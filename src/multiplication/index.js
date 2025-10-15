@@ -114,7 +114,7 @@ export function initMultiplication() {
       completed = true;
       tables.forEach(word => {
         multiplicationState[word] = (multiplicationState[word] || 0) + 1;
-      })
+      });
       localStorage.setItem(multiplicationConfig.stateName, JSON.stringify(multiplicationState));
       localStorage.setItem(multiplicationConfig.rewardsKey, round(rewardsTotal + multiplicationConfig.completedFieldsReward, multiplicationConfig.completedFieldsReward));
 
@@ -124,7 +124,7 @@ export function initMultiplication() {
       setTimeout(() => {
         // Clear saved UI state
         localStorage.removeItem(multiplicationConfig.uiStateKey);
-        clearComplete()
+        clearComplete();
       }, 3500);
     }
   }
@@ -135,12 +135,12 @@ export function initMultiplication() {
       ui += `<div class="number-button paused" id="${sentenceId}-${i}">${i}</div>`;
     });
     return `${ui}</div>`;
-  }
+  };
 
-  const fieldsHtml = tables.map((sentence, i) => {
+  const fieldsHtml = tables.map((sentence) => {
     const sentenceId = sentenceToId(sentence);
     return `<div class="field"><input id="${sentenceId}" class="paused" type="text" autocorrect="off" autocapitalize="off" readonly /><span title="repeat" class="repeat">↻</span>${getNumberUI(sentenceId)}</div>`;
-  }).join('');;
+  }).join('');
 
   const resultsHtml = Object.entries(multiplicationState).map(([sentence, count]) => {
     const displayTable = /~/.test(sentence) ? `<s>${sentence.split('~')[0]}</s>` : sentence;
@@ -189,14 +189,14 @@ export function initMultiplication() {
         input.progress = 0;
         input.classList.remove('correct');
         input.classList.remove('incorrect');
-      }
+      };
 
       const repeatEl = $(`#${sentenceId} ~ .repeat`);
       repeatEl.onclick = () => {
         clearInput();
         input.focus();
         input.blur();
-      }
+      };
 
       const handleIncorrect = () => {
         speak('yowser!');
@@ -255,7 +255,7 @@ export function initMultiplication() {
               handleIncorrect();
             }
           }
-        }
+        };
       }
     });
     $('#help-icon').onclick = () => {
@@ -265,13 +265,15 @@ export function initMultiplication() {
     // Retest
     Object.keys(multiplicationState).forEach((word) => {
       const resultEl = $(`#result-${sentenceToId(word)}`);
-      resultEl.ondblclick = () => {
-        if (confirm(`Reset "${word}"?`)) {
-          multiplicationState[`${word}~${Date.now()}`] = multiplicationState[word];
-          delete multiplicationState[word];
-          localStorage.setItem(multiplicationConfig.stateName, JSON.stringify(multiplicationState));
-          location.reload();
-        }
+      if (resultEl) {
+        resultEl.ondblclick = () => {
+          if (confirm(`Reset "${word}"?`)) {
+            multiplicationState[`${word}~${Date.now()}`] = multiplicationState[word];
+            delete multiplicationState[word];
+            localStorage.setItem(multiplicationConfig.stateName, JSON.stringify(multiplicationState));
+            location.reload();
+          }
+        };
       }
     });
   });
@@ -298,14 +300,14 @@ export function initMultiplication() {
       }
       location.reload();
     }
-  }
+  };
   $('#rewards').onclick = () => {
     const redeem = confirm('Redeem all points?');
     if (redeem) {
       localStorage.setItem(multiplicationConfig.redeemedKey, rewardsTotal);
       location.reload();
     }
-  }
+  };
 
   function updateResultsUI(showResults, hideTitle) {
     $('#results-title').style.display = showResults && !hideTitle ? 'block' : 'none';

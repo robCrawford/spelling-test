@@ -4,7 +4,7 @@ import data from './data.js';
 export const spellingConfig = {
   stateName: 'spelling-state',
   fieldCount: 10,
-  completedWordCount: 1200, // How many times to test each number sentence
+  completedWordCount: 1200, // How many times to test each word
   hintCount: 1,
   completedFieldsReward: 50,
   rewardsKey: 'spelling-rewards',
@@ -152,7 +152,7 @@ export function initSpelling() {
       completed = true;
       words.forEach(word => {
         spellingState[word] = (spellingState[word] || 0) + 1;
-      })
+      });
       localStorage.setItem(spellingConfig.stateName, JSON.stringify(spellingState));
       localStorage.setItem(spellingConfig.rewardsKey, round(rewardsTotal + spellingConfig.completedFieldsReward, spellingConfig.completedFieldsReward));
 
@@ -167,7 +167,7 @@ export function initSpelling() {
     }
   }
 
-  const fieldsHtml = words.map((word, i) =>
+  const fieldsHtml = words.map((word) =>
     `<div class="field"><input id="${wordToId(word)}" type="text" autocorrect="off" autocapitalize="off" /><span title="repeat" class="repeat">↻</span></div>`
   ).join('');
 
@@ -212,13 +212,15 @@ export function initSpelling() {
     // Retest word
     Object.keys(spellingState).forEach((word) => {
       const resultEl = $(`#result-${wordToId(word)}`);
-      resultEl.ondblclick = () => {
-        if (confirm(`Reset "${word}"?`)) {
-          spellingState[`${word}~${Date.now()}`] = spellingState[word];
-          delete spellingState[word];
-          localStorage.setItem(spellingConfig.stateName, JSON.stringify(spellingState));
-          location.reload();
-        }
+      if (resultEl) {
+        resultEl.ondblclick = () => {
+          if (confirm(`Reset "${word}"?`)) {
+            spellingState[`${word}~${Date.now()}`] = spellingState[word];
+            delete spellingState[word];
+            localStorage.setItem(spellingConfig.stateName, JSON.stringify(spellingState));
+            location.reload();
+          }
+        };
       }
     });
   });
@@ -245,7 +247,7 @@ export function initSpelling() {
       }
       location.reload();
     }
-  }
+  };
 
   $('#rewards').onclick = () => {
     const redeem = confirm('Redeem all points?');
@@ -253,7 +255,7 @@ export function initSpelling() {
       localStorage.setItem(spellingConfig.redeemedKey, rewardsTotal);
       location.reload();
     }
-  }
+  };
 
   function updateResultsUI(showResults, hideTitle) {
     $('#results-title').style.display = showResults && !hideTitle ? 'block' : 'none';
