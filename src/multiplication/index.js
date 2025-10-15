@@ -302,7 +302,7 @@ export function initMultiplication() {
   $('#rewards').onclick = () => {
     const redeem = confirm('Redeem all points?');
     if (redeem) {
-      localStorage.setItem(multiplicationConfig.redeemedKey, redeemedAmount + rewardsTotal);
+      localStorage.setItem(multiplicationConfig.redeemedKey, rewardsTotal);
       location.reload();
     }
   }

@@ -250,7 +250,7 @@ export function initSpelling() {
   $('#rewards').onclick = () => {
     const redeem = confirm('Redeem all points?');
     if (redeem) {
-      localStorage.setItem(spellingConfig.redeemedKey, redeemedAmount + rewardsTotal);
+      localStorage.setItem(spellingConfig.redeemedKey, rewardsTotal);
       location.reload();
     }
   }
