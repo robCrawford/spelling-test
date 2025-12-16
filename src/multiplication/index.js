@@ -10,7 +10,8 @@ export const multiplicationConfig = {
   redeemedKey: 'multiplication-redeemed',
   nameKey: 'spelling-name',
   uiStateKey: 'multiplication-ui-state',
-  tableSelectorKey: 'multiplication-ui-table'
+  tableSelectorKey: 'multiplication-ui-table',
+  darkModeKey: 'spelling-dark-mode'
 };
 
 let name = '';
@@ -324,6 +325,20 @@ export function initMultiplication() {
       location.reload();
     };
   });
+
+  const isDarkMode = localStorage.getItem(multiplicationConfig.darkModeKey) === 'true';
+  if (isDarkMode) {
+    document.body.classList.add('words-bg');
+    $('#dark-mode-toggle').innerHTML = '🌞';
+  } else {
+    document.body.classList.remove('words-bg');
+    $('#dark-mode-toggle').innerHTML = '🌛';
+  }
+  $('#dark-mode-toggle').onclick = () => {
+    const isCurrentlyDark = document.body.classList.toggle('words-bg');
+    $('#dark-mode-toggle').innerHTML = isCurrentlyDark ? '🌞' : '🌛';
+    localStorage.setItem(multiplicationConfig.darkModeKey, isCurrentlyDark);
+  };
 
   $('#results-link').style.display = 'block';
   $('#results-link').onclick = () => {
