@@ -7,7 +7,6 @@ export function createWordBackground() {
     ...data.year2,
     ...data.year3,
     ...data.year4,
-    ...data.year3_4,
     ...data.year5_6
   ]);
 
