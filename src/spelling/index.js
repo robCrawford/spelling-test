@@ -1,5 +1,6 @@
 import { deduplicate, round, speak, wordToId, clearComplete } from '../utils.js';
 import data from './data.js';
+import { createWordBackground } from '../word-background.js';
 
 export const spellingConfig = {
   stateName: 'spelling-state',
@@ -247,6 +248,15 @@ export function initSpelling() {
     const isCurrentlyDark = document.body.classList.toggle('words-bg');
     $('#dark-mode-toggle').innerHTML = isCurrentlyDark ? '🌞' : '🌛';
     localStorage.setItem(spellingConfig.darkModeKey, isCurrentlyDark);
+
+    if (isCurrentlyDark) {
+      createWordBackground();
+    } else {
+      const container = $('#word-background');
+      if (container) {
+        container.innerHTML = '';
+      }
+    }
   };
 
   $('#results-link').style.display = 'block';

@@ -5,5 +5,7 @@ window.scrollTo(0, 0);
 
 window.$ = selector => document.querySelector(selector);
 
-createWordBackground();
+if (localStorage.getItem('spelling-dark-mode') === 'true') {
+  createWordBackground();
+}
 initSpelling();

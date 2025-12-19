@@ -45,6 +45,10 @@ body {
   z-index: -1;
   pointer-events: none;
   background-color: #302f2e;
+  display: none;
+}
+.words-bg #word-background {
+  display: block;
 }
 .bg-word {
   position: absolute;
