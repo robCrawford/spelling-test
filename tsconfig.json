@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "lib": ["dom", "es2022"],
+    "target": "es2022",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "declaration": true,
+    "esModuleInterop": true,
+    "noEmit": true,
+    "types": ["vitest/globals"],
+    "skipLibCheck": true,
+    "paths": {
+      "cr-26": ["../../src/cr-26.ts"],
+      "cr-26/test": ["../../src/component-test.ts"]
+    }
+  },
+  "include": ["./src/**/*"],
+  "exclude": [".git", "node_modules"]
+}

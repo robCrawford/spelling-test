@@ -1,0 +1,40 @@
+{
+  "name": "spelling-test",
+  "version": "0.1.0",
+  "description": "spelling test app",
+  "type": "module",
+  "scripts": {
+    "dev": "parcel --no-cache ./index.html",
+    "ts:check": "tsc --noEmit",
+    "ts:clean": "rm -rf ./dist ./.parcel-cache",
+    "ts:build": "yarn ts:clean && tsc --noEmit && cross-env NODE_ENV=production parcel build ./index.html --public-url ./",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint 'tiles/**/*.ts'"
+  },
+  "author": "Rob Crawford",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/robCrawford/spelling-test.git"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@parcel/transformer-typescript-tsc": "^2.13.3",
+    "@typescript-eslint/eslint-plugin": "^8.46.2",
+    "@typescript-eslint/parser": "^8.46.2",
+    "@vitest/ui": "^2.1.8",
+    "cross-env": "^10.1.0",
+    "eslint": "^9.39.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "jsdom": "^25.0.1",
+    "parcel": "^2.13.3",
+    "prettier": "^3.6.2",
+    "typescript": "^5.9.3",
+    "vitest": "^2.1.8"
+  },
+  "dependencies": {
+    "cr-26": "^0.1.0"
+  }
+}

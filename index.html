@@ -5,8 +5,8 @@
   <meta charset="utf-8" />
   <meta http-equiv="x-ua-compatible" content="ie=edge" />
   <title>Spelling</title>
-  <link rel="stylesheet" href="./css/index.css" />
-  <link rel="stylesheet" href="./css/spelling.css" />
+  <link rel="stylesheet" href="src/css/index.css" />
+  <link rel="stylesheet" href="src/css/spelling.css" />
 </head>
 <body>
   <script>
@@ -18,6 +18,7 @@
     }
   </script>
   <div id="word-background"></div>
+  <div id="tiles-link"><a href='./tiles.html'>tiles</a></div>
   <div id="main" class="spelling">
     <div id="complete-overlay"></div>
     <div id="nav"><b>Spelling</b> | <a href='./multiplication.html'>Multiplication</a> | <a class="reset-link" title="Reset" onclick="window.promptReset('spelling')">
@@ -39,7 +40,7 @@
     <h1 id="title"></h1>
     <div id="dark-mode-toggle"></div>
     <div id="help-icon" class="btn btn-primary tooltip"  style="display: none">
-      <img src="img/emoji-sloth.png" width="60px" height="60px" />
+      <img src="src/img/emoji-sloth.png" width="60px" height="60px" />
       <div class="balloon">
         <div id="help-text"></div>
         <i></i>
@@ -52,6 +53,6 @@
     <div id="results-link">[ Show results ]</div>
     <div class="spacer"></div>
   </div>
-  <script type="module" src="./spelling.js"></script>
+  <script type="module" src="src/spelling.js"></script>
 </body>
 </html>
