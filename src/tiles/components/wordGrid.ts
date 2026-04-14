@@ -1,5 +1,5 @@
 import { component, html, VNode } from "cr-26";
-import type { ActionPayloads } from "../app";
+import type { RootActionPayloads } from "../app";
 import letterTile from "./letterTile";
 import letterSlot from "./letterSlot";
 
@@ -12,7 +12,7 @@ export type Props = Readonly<{
 
 type Component = {
   Props: Props;
-  RootActionPayloads: ActionPayloads;
+  RootActionPayloads: RootActionPayloads;
 };
 
 const wordGrid = component<Component>(({ rootAction }) => ({

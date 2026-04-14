@@ -1,49 +1,51 @@
 import { component, html, mount, Next, Task, VNode } from "cr-26";
 import wordGrid from "./components/wordGrid";
 import celebration from "./components/celebration";
-import { reloadPage } from "./services/browser";
+import { getLocalStorage, localStorageKeys, reloadPage, setLocalStorage } from "./services/browser";
 
 const { div, h1 } = html;
 
-export type Props = Readonly<{
+export type RootProps = Readonly<{
   word: string;
 }>;
 
-export type State = Readonly<{
+export type RootState = Readonly<{
+  characterIndex: string;
   slots: (string | null)[];
   dragging: string | null;
 }>;
 
-export type ActionPayloads = Readonly<{
+export type RootActionPayloads = Readonly<{
   DragStart: { letter: string };
   DropLetter: { slotIndex: number };
   DragEnd: null;
   Reload: null;
 }>;
 
-export type TaskPayloads = Readonly<{
-  ReloadPage: null;
+export type RootTaskPayloads = Readonly<{
+  ReloadPage: { newCharacterIndex: string };
 }>;
 
 export type Component = {
-  Props: Props;
-  State: State;
-  ActionPayloads: ActionPayloads;
-  TaskPayloads: TaskPayloads;
+  Props: RootProps;
+  State: RootState;
+  ActionPayloads: RootActionPayloads;
+  TaskPayloads: RootTaskPayloads;
 };
 
 const app = component<Component>(({ action, task }) => ({
-  state: (props): State => ({
+  state: (props): RootState => ({
+    characterIndex: getLocalStorage(localStorageKeys.characterIndex) || "0",
     slots: props.word.split("").map(() => null),
     dragging: null
   }),
 
   actions: {
-    DragStart: ({ letter }, { state }): { state: State } => ({
+    DragStart: ({ letter }, { state }): { state: RootState } => ({
       state: { ...state, dragging: letter }
     }),
 
-    DropLetter: ({ slotIndex }, { state }): { state: State } => {
+    DropLetter: ({ slotIndex }, { state }): { state: RootState } => {
       const { dragging } = state;
       if (dragging === null) return { state };
       return {
@@ -55,19 +57,24 @@ const app = component<Component>(({ action, task }) => ({
       };
     },
 
-    DragEnd: (_, { state }): { state: State } => ({
+    DragEnd: (_, { state }): { state: RootState } => ({
       state: state.dragging !== null ? { ...state, dragging: null } : state
     }),
 
-    Reload: (_, { state }): { state: State; next: Next } => ({
+    Reload: (_, { state }): { state: RootState; next: Next } => ({
       state,
-      next: task("ReloadPage")
+      next: task("ReloadPage", {
+        newCharacterIndex: String(Number(state.characterIndex) + 1)
+      })
     })
   },
 
   tasks: {
-    ReloadPage: (): Task<void, Props, State> => ({
-      perform: reloadPage
+    ReloadPage: ({ newCharacterIndex }): Task<void, RootProps, RootState> => ({
+      perform: (): void => {
+        setLocalStorage(localStorageKeys.characterIndex, newCharacterIndex);
+        reloadPage();
+      }
     })
   },
 
@@ -85,7 +92,7 @@ const app = component<Component>(({ action, task }) => ({
 
 document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener("dragover", (e) => e.preventDefault());
-  mount({ app, props: { word: "Monday" } });
+  mount({ app, props: { word: "a" } });
 });
 
 export default app;

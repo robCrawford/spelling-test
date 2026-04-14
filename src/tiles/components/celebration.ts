@@ -1,6 +1,12 @@
 import { ActionThunk, component, html, VNode } from "cr-26";
+import { RootState } from "../app";
 
-const { div, h2 } = html;
+const { div, h2, img } = html;
+
+const characterUrls = [
+  new URL("../svg/hello-kitty.svg", import.meta.url).href,
+  new URL("../svg/kuromi.svg", import.meta.url).href
+];
 
 export type Props = Readonly<{
   visible: boolean;
@@ -9,6 +15,7 @@ export type Props = Readonly<{
 
 type Component = {
   Props: Props;
+  RootState: RootState;
 };
 
 const COLORS = [
@@ -45,14 +52,22 @@ function makeParticles(): VNode[] {
 }
 
 const celebration = component<Component>(() => ({
-  view(id, { props }): VNode {
+  view(id, { props, rootState }): VNode {
     if (!props.visible) return div(`#${id}`);
     return div(`#${id}.celebration`, { on: { click: props.onTap } }, [
       div(".celebration-backdrop"),
       div(".celebration-card", [
         div(".confetti-burst", makeParticles()),
-        h2(".celebration-message", "Well done! 🎉"),
-        div(".celebration-stars", "⭐ ⭐ ⭐")
+        img(".celebration-img", {
+          attrs: {
+            src: characterUrls[Number(rootState.characterIndex) % characterUrls.length],
+            alt: ""
+          }
+        }),
+        div(".celebration-content", [
+          h2(".celebration-message", "Well done! 🎉"),
+          div(".celebration-stars", "⭐ ⭐ ⭐")
+        ])
       ])
     ]);
   }

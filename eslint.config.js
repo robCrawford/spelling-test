@@ -95,5 +95,20 @@ export default [
       "@typescript-eslint/explicit-function-return-type": "off",
       "@typescript-eslint/no-unsafe-function-type": "off",
     }
+  },
+  {
+    files: ["**/*.js"],
+    languageOptions: {
+      parserOptions: {
+        ecmaVersion: 2022,
+        sourceType: "module"
+      },
+      globals: {
+        ...globals.browser,
+        ...globals.es2022,
+        ...globals.node,
+        "$": "readonly"
+      }
+    }
   }
 ];
