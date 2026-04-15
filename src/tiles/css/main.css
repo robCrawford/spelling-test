@@ -6,7 +6,7 @@
 
 html, body {
   height: 100%;
-  font-family: 'Nunito', 'Comic Sans MS', system-ui, sans-serif;
+  font-family: 'Fredoka', 'Comic Sans MS', system-ui, sans-serif;
   background: linear-gradient(135deg, #1a1248 0%, #2d1b69 50%, #0f3460 100%);
   color: #fff;
   overflow: hidden;
@@ -28,7 +28,6 @@ html, body {
 
 .game-title {
   font-size: 3rem;
-  font-weight: 900;
   letter-spacing: 0.1em;
   text-shadow: 0 0 20px rgba(180, 120, 255, 0.8), 0 3px 6px rgba(0, 0, 0, 0.5);
   color: #f0d9ff;
@@ -129,7 +128,6 @@ html, body {
 
 .celebration-message {
   font-size: 3rem;
-  font-weight: 900;
   color: #ffd93d;
   text-shadow: 0 0 20px rgba(255, 217, 61, 0.8), 0 3px 6px rgba(0, 0, 0, 0.3);
   margin: 0;
@@ -203,11 +201,11 @@ html, body {
   align-items: center;
   justify-content: center;
   cursor: grab;
+  touch-action: none;
 }
 
 .tile-letter {
   font-size: 3.2rem;
-  font-weight: 900;
   color: #2a1800;
   line-height: 1;
   user-select: none;
