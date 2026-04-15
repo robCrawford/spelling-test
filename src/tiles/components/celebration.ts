@@ -4,8 +4,10 @@ import { RootState } from "../app";
 const { div, h2, img } = html;
 
 const characterUrls = [
-  new URL("../svg/hello-kitty.svg", import.meta.url).href,
-  new URL("../svg/kuromi.svg", import.meta.url).href
+  new URL("../img/hello-kitty.svg", import.meta.url).href,
+  new URL("../img/kuromi.svg", import.meta.url).href,
+  new URL("../img/cinnamoroll.svg", import.meta.url).href,
+  new URL("../img/mymelody.svg", import.meta.url).href
 ];
 
 characterUrls.forEach((href) => {
