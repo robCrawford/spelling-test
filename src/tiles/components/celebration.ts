@@ -8,6 +8,14 @@ const characterUrls = [
   new URL("../svg/kuromi.svg", import.meta.url).href
 ];
 
+characterUrls.forEach((href) => {
+  const link = document.createElement("link");
+  link.rel = "preload";
+  link.as = "image";
+  link.href = href;
+  document.head.appendChild(link);
+});
+
 export type Props = Readonly<{
   visible: boolean;
   onTap: ActionThunk;
