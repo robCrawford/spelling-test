@@ -138,8 +138,7 @@ export function initMultiplication() {
 
       $('#complete-overlay').style.left = 0;
       $('#complete-overlay').style.right = 0;
-      // speak(`Awesome job ${name}! You are rocking it! Go go go`);
-      speak(`Awesome job ${name}! Spongebob big guy pants ok`);
+      speak(`Awesome job ${name}! You are rocking it! Go go go`);
       setTimeout(() => {
         clearComplete();
       }, 3500);

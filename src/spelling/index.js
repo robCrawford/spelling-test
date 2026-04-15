@@ -25,7 +25,7 @@ let tempOverrideWords = [];
 
 // Clear local storage prior to latest key
 // NOTE: changing this removes all previous data from the browser!
-const validDataSetKey = 'spelling-10-2025';
+const validDataSetKey = 'spelling-04-2026';
 if (!localStorage.getItem(validDataSetKey)) {
   localStorage.clear();
   localStorage.setItem(validDataSetKey, true);

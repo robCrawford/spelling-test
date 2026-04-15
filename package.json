@@ -4,10 +4,10 @@
   "description": "spelling test app",
   "type": "module",
   "scripts": {
-    "dev": "parcel --no-cache ./index.html",
+    "dev": "parcel --no-cache ./index.html ./tiles.html",
     "ts:check": "tsc --noEmit",
     "ts:clean": "rm -rf ./dist ./.parcel-cache",
-    "ts:build": "yarn ts:clean && tsc --noEmit && cross-env NODE_ENV=production parcel build ./index.html --public-url ./",
+    "ts:build": "yarn ts:clean && tsc --noEmit && cross-env NODE_ENV=production parcel build ./index.html ./tiles.html --public-url ./",
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "eslint 'tiles/**/*.ts'"
