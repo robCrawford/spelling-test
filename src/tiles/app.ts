@@ -2,8 +2,10 @@ import { component, html, mount, Next, Task, VNode } from "cr-26";
 import wordGrid from "./components/wordGrid";
 import celebration from "./components/celebration";
 import { getLocalStorage, localStorageKeys, reloadPage, setLocalStorage } from "./services/browser";
+import { speak } from "../utils";
+import { getGameWord } from "./services/data";
 
-const { div, h1 } = html;
+const { div } = html;
 
 export type RootProps = Readonly<{
   word: string;
@@ -18,11 +20,12 @@ export type RootState = Readonly<{
 export type RootActionPayloads = Readonly<{
   DragStart: { letter: string };
   DropLetter: { slotIndex: number };
-  DragEnd: null;
+  DragEnd: { letter: string };
   Reload: null;
 }>;
 
 export type RootTaskPayloads = Readonly<{
+  SpeakWord: { word: string };
   ReloadPage: { newCharacterIndex: string };
 }>;
 
@@ -57,8 +60,9 @@ const app = component<Component>(({ action, task }) => ({
       };
     },
 
-    DragEnd: (_, { state }): { state: RootState } => ({
-      state: state.dragging !== null ? { ...state, dragging: null } : state
+    DragEnd: ({ letter }, { state }): { state: RootState; next: Next } => ({
+      state: state.dragging !== null ? { ...state, dragging: null } : state,
+      next: task("SpeakWord", { word: letter })
     }),
 
     Reload: (_, { state }): { state: RootState; next: Next } => ({
@@ -70,6 +74,11 @@ const app = component<Component>(({ action, task }) => ({
   },
 
   tasks: {
+    SpeakWord: ({ word }): Task<void, RootProps, RootState> => ({
+      perform: (): void => {
+        speak(word);
+      }
+    }),
     ReloadPage: ({ newCharacterIndex }): Task<void, RootProps, RootState> => ({
       perform: (): void => {
         setLocalStorage(localStorageKeys.characterIndex, newCharacterIndex);
@@ -83,7 +92,15 @@ const app = component<Component>(({ action, task }) => ({
       (slot, i) => slot !== null && slot.toLowerCase() === props.word[i].toLowerCase()
     );
     return div(`#${id}.game`, [
-      h1(".game-title", "Spell It!"),
+      div(
+        ".game-title",
+        {
+          on: {
+            click: task("SpeakWord", { word: props.word })
+          }
+        },
+        "Spell It!"
+      ),
       wordGrid(`${id}-word`, { word: props.word, slots: state.slots }),
       celebration(`${id}-celebration`, { visible: isComplete, onTap: action("Reload") })
     ]);
@@ -92,7 +109,7 @@ const app = component<Component>(({ action, task }) => ({
 
 document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener("dragover", (e) => e.preventDefault());
-  mount({ app, props: { word: "a" } });
+  mount({ app, props: { word: getGameWord() } });
 });
 
 export default app;

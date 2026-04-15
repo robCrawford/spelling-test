@@ -113,7 +113,7 @@ const wordGrid = component<Component>(({ rootAction }) => {
             letterTile(`${id}-tile-${i}`, {
               letter,
               onDragStart: rootAction("DragStart", { letter }),
-              onDragEnd: rootAction("DragEnd"),
+              onDragEnd: rootAction("DragEnd", { letter }),
               onTouchStart: onTouchStart(letter),
               onTouchMove,
               onTouchEnd
