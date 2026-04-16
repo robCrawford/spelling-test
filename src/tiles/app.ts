@@ -12,6 +12,7 @@ import {
 } from "./services/browser";
 import { speak } from "../utils";
 import { getGameWord } from "./services/data";
+import { config } from "./config";
 
 const { div } = html;
 
@@ -139,7 +140,7 @@ const app = component<Component>(({ action, task }) => ({
     }),
     ReloadPage: ({ newcelebrationImgIndex }): Task<void, RootProps, RootState> => ({
       perform: (): void => {
-        addReward(10);
+        addReward(config.rewardPerWord);
         setLocalStorage(localStorageKeys.celebrationImgIndex, newcelebrationImgIndex);
         reloadPage();
       }

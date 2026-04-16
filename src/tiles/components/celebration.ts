@@ -1,5 +1,6 @@
 import { ActionThunk, component, html, VNode } from "cr-26";
 import { RootState } from "../app";
+import { config } from "../config";
 
 const { div, h2, img } = html;
 
@@ -75,7 +76,7 @@ const celebration = component<Component>(() => ({
           }
         }),
         div(".celebration-content", [
-          h2(".celebration-message", "Well done! 🎉"),
+          h2(".celebration-message", `${config.rewardPerWord} points! 🎉`),
           div(".celebration-stars", "⭐ ⭐ ⭐")
         ])
       ])
