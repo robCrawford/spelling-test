@@ -1,7 +1,15 @@
 import { component, html, mount, Next, Task, VNode } from "cr-26";
 import wordGrid from "./components/wordGrid";
 import celebration from "./components/celebration";
-import { getLocalStorage, localStorageKeys, reloadPage, setLocalStorage } from "./services/browser";
+import {
+  addReward,
+  getLocalStorage,
+  getRewardsDisplayAmount,
+  localStorageKeys,
+  redeemAllRewards,
+  reloadPage,
+  setLocalStorage
+} from "./services/browser";
 import { speak } from "../utils";
 import { getGameWord } from "./services/data";
 
@@ -15,6 +23,7 @@ export type RootState = Readonly<{
   celebrationImgIndex: string;
   letterSlots: (string | null)[];
   draggedLetter: string | null;
+  rewardsDisplayAmount: number;
 }>;
 
 export type RootActionPayloads = Readonly<{
@@ -22,11 +31,13 @@ export type RootActionPayloads = Readonly<{
   DropLetter: { slotIndex: number };
   DragLetterEnd: null;
   Reload: null;
+  RedeemRewards: null;
 }>;
 
 export type RootTaskPayloads = Readonly<{
   SpeakString: { word: string };
   ReloadPage: { newcelebrationImgIndex: string };
+  RedeemRewardsTask: null;
 }>;
 
 export type Component = {
@@ -40,7 +51,8 @@ const app = component<Component>(({ action, task }) => ({
   state: (props): RootState => ({
     celebrationImgIndex: getLocalStorage(localStorageKeys.celebrationImgIndex) || "0",
     letterSlots: props.word.split("").map(() => null),
-    draggedLetter: null
+    draggedLetter: null,
+    rewardsDisplayAmount: getRewardsDisplayAmount()
   }),
 
   actions: {
@@ -73,6 +85,11 @@ const app = component<Component>(({ action, task }) => ({
       next: task("ReloadPage", {
         newcelebrationImgIndex: String(Number(state.celebrationImgIndex) + 1)
       })
+    }),
+
+    RedeemRewards: (_, { state }): { state: RootState; next: Next } => ({
+      state,
+      next: task("RedeemRewardsTask")
     })
   },
 
@@ -84,8 +101,18 @@ const app = component<Component>(({ action, task }) => ({
     }),
     ReloadPage: ({ newcelebrationImgIndex }): Task<void, RootProps, RootState> => ({
       perform: (): void => {
+        addReward(10);
         setLocalStorage(localStorageKeys.celebrationImgIndex, newcelebrationImgIndex);
         reloadPage();
+      }
+    }),
+
+    RedeemRewardsTask: (): Task<void, RootProps, RootState> => ({
+      perform: (): void => {
+        if (window.confirm("Redeem all points?")) {
+          redeemAllRewards();
+          reloadPage();
+        }
       }
     })
   },
@@ -105,7 +132,12 @@ const app = component<Component>(({ action, task }) => ({
         "Spell It!"
       ),
       wordGrid(`${id}-word`, { word: props.word, letterSlots: state.letterSlots }),
-      celebration(`${id}-celebration`, { visible: isComplete, onTap: action("Reload") })
+      celebration(`${id}-celebration`, { visible: isComplete, onTap: action("Reload") }),
+      div(
+        ".tiles-rewards",
+        { on: { click: action("RedeemRewards") } },
+        `🌟 ${state.rewardsDisplayAmount}`
+      )
     ]);
   }
 }));
