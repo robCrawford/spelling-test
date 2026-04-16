@@ -36,6 +36,8 @@ export type RootActionPayloads = Readonly<{
 
 export type RootTaskPayloads = Readonly<{
   SpeakString: { word: string };
+  RepeatWordTask: { word: string; hintId: string };
+  CelebrateTask: null;
   ReloadPage: { newcelebrationImgIndex: string };
   RedeemRewardsTask: null;
 }>;
@@ -60,16 +62,16 @@ const app = component<Component>(({ action, task }) => ({
       state: { ...state, draggedLetter: letter }
     }),
 
-    DropLetter: ({ slotIndex }, { state }): { state: RootState; next?: Next } => {
+    DropLetter: ({ slotIndex }, { state, props }): { state: RootState; next?: Next } => {
       const { draggedLetter } = state;
       if (draggedLetter === null) return { state };
+      const newLetterSlots = state.letterSlots.map((s, i) => (i === slotIndex ? draggedLetter : s));
+      const isComplete = newLetterSlots.every(
+        (slot, i) => slot !== null && slot.toLowerCase() === props.word[i].toLowerCase()
+      );
       return {
-        state: {
-          ...state,
-          draggedLetter: null,
-          letterSlots: state.letterSlots.map((s, i) => (i === slotIndex ? draggedLetter : s))
-        },
-        next: task("SpeakString", { word: draggedLetter })
+        state: { ...state, draggedLetter: null, letterSlots: newLetterSlots },
+        next: isComplete ? task("CelebrateTask") : task("SpeakString", { word: draggedLetter })
       };
     },
 
@@ -99,6 +101,26 @@ const app = component<Component>(({ action, task }) => ({
         speak(word);
       }
     }),
+
+    CelebrateTask: (): Task<void, RootProps, RootState> => ({
+      perform: (): void => {
+        const name = window.localStorage.getItem("spelling-name") || "";
+        speak(`Awesome job ${name}! You are rocking it! Go go go`);
+      }
+    }),
+
+    RepeatWordTask: ({ word, hintId }): Task<void, RootProps, RootState> => ({
+      perform: (): void => {
+        speak(word);
+        const hintEl = document.getElementById(hintId);
+        if (hintEl) {
+          hintEl.style.visibility = "visible";
+          setTimeout(() => {
+            hintEl.style.visibility = "hidden";
+          }, 500);
+        }
+      }
+    }),
     ReloadPage: ({ newcelebrationImgIndex }): Task<void, RootProps, RootState> => ({
       perform: (): void => {
         addReward(10);
@@ -122,15 +144,19 @@ const app = component<Component>(({ action, task }) => ({
       (slot, i) => slot !== null && slot.toLowerCase() === props.word[i].toLowerCase()
     );
     return div(`#${id}.game`, [
-      div(
-        ".game-title",
-        {
-          on: {
-            click: task("SpeakString", { word: props.word })
-          }
-        },
-        "Spell It!"
-      ),
+      div(".game-title", "Spell It!"),
+      div(".word-hint-row", [
+        div(".word-hint", [div(`#${id}-word-hint-text.word-hint-text`, props.word)]),
+        div(
+          ".game-title-repeat",
+          {
+            on: {
+              click: task("RepeatWordTask", { word: props.word, hintId: `${id}-word-hint-text` })
+            }
+          },
+          "↻"
+        )
+      ]),
       wordGrid(`${id}-word`, { word: props.word, letterSlots: state.letterSlots }),
       celebration(`${id}-celebration`, { visible: isComplete, onTap: action("Reload") }),
       div(
