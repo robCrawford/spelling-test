@@ -244,6 +244,12 @@ html, body {
   touch-action: none;
 }
 
+.tile.disabled {
+  opacity: 0.3;
+  cursor: default;
+  pointer-events: none;
+}
+
 .tile-letter {
   font-size: 3.2rem;
   color: #2a1800;

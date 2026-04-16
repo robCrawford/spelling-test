@@ -93,6 +93,25 @@ const wordGrid = component<Component>(({ rootAction }) => {
       const letters = props.word.split("");
       const shuffled = [...letters].sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
 
+      const correctCounts = props.letterSlots.reduce<Record<string, number>>((acc, slot, i) => {
+        if (slot !== null && slot.toLowerCase() === letters[i].toLowerCase()) {
+          const key = slot.toLowerCase();
+          return { ...acc, [key]: (acc[key] || 0) + 1 };
+        }
+        return acc;
+      }, {});
+
+      const usedCounts: Record<string, number> = {};
+      const disabledTiles = shuffled.map((letter) => {
+        const key = letter.toLowerCase();
+        const used = usedCounts[key] || 0;
+        if (used < (correctCounts[key] || 0)) {
+          usedCounts[key] = used + 1;
+          return true;
+        }
+        return false;
+      });
+
       return div(`#${id}.word-grid`, [
         div(
           ".letterSlots-row",
@@ -112,6 +131,7 @@ const wordGrid = component<Component>(({ rootAction }) => {
           shuffled.map((letter, i) =>
             letterTile(`${id}-tile-${i}`, {
               letter,
+              disabled: disabledTiles[i],
               onDragLetterStart: rootAction("DragLetterStart", { letter }),
               onDragLetterEnd: rootAction("DragLetterEnd"),
               onTouchStart: onTouchStart(letter),

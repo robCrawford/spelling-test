@@ -21,6 +21,7 @@ export type RootProps = Readonly<{
 
 export type RootState = Readonly<{
   celebrationImgIndex: string;
+  celebrationVisible: boolean;
   letterSlots: (string | null)[];
   draggedLetter: string | null;
   rewardsDisplayAmount: number;
@@ -30,6 +31,7 @@ export type RootActionPayloads = Readonly<{
   DragLetterStart: { letter: string };
   DropLetter: { slotIndex: number };
   DragLetterEnd: null;
+  ShowCelebration: null;
   Reload: null;
   RedeemRewards: null;
 }>;
@@ -52,6 +54,7 @@ export type Component = {
 const app = component<Component>(({ action, task }) => ({
   state: (props): RootState => ({
     celebrationImgIndex: getLocalStorage(localStorageKeys.celebrationImgIndex) || "0",
+    celebrationVisible: false,
     letterSlots: props.word.split("").map(() => null),
     draggedLetter: null,
     rewardsDisplayAmount: getRewardsDisplayAmount()
@@ -82,6 +85,10 @@ const app = component<Component>(({ action, task }) => ({
       })
     }),
 
+    ShowCelebration: (_, { state }): { state: RootState } => ({
+      state: { ...state, celebrationVisible: true }
+    }),
+
     Reload: (_, { state }): { state: RootState; next: Next } => ({
       state,
       next: task("ReloadPage", {
@@ -103,10 +110,12 @@ const app = component<Component>(({ action, task }) => ({
     }),
 
     CelebrateTask: (): Task<void, RootProps, RootState> => ({
-      perform: (): void => {
+      perform: (): Promise<void> => {
         const name = window.localStorage.getItem("spelling-name") || "";
         speak(`Awesome job ${name}! You are rocking it! Go go go`);
-      }
+        return new Promise((resolve) => setTimeout(resolve, 800));
+      },
+      success: (): Next => action("ShowCelebration")
     }),
 
     RepeatWordTask: ({ word, hintId }): Task<void, RootProps, RootState> => ({
@@ -140,9 +149,6 @@ const app = component<Component>(({ action, task }) => ({
   },
 
   view(id, { props, state }): VNode {
-    const isComplete = state.letterSlots.every(
-      (slot, i) => slot !== null && slot.toLowerCase() === props.word[i].toLowerCase()
-    );
     return div(`#${id}.game`, [
       div(".game-title", "Spell It!"),
       div(".word-hint-row", [
@@ -158,7 +164,10 @@ const app = component<Component>(({ action, task }) => ({
         )
       ]),
       wordGrid(`${id}-word`, { word: props.word, letterSlots: state.letterSlots }),
-      celebration(`${id}-celebration`, { visible: isComplete, onTap: action("Reload") }),
+      celebration(`${id}-celebration`, {
+        visible: state.celebrationVisible,
+        onTap: action("Reload")
+      }),
       div(
         ".tiles-rewards",
         { on: { click: action("RedeemRewards") } },

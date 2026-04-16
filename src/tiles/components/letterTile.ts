@@ -6,6 +6,7 @@ type EventHandler = (e: Event) => void;
 
 export type Props = Readonly<{
   letter: string;
+  disabled: boolean;
   onDragLetterStart: ActionThunk;
   onDragLetterEnd: ActionThunk;
   onTouchStart: EventHandler;
@@ -19,19 +20,22 @@ type Component = {
 
 const letterTile = component<Component>(() => ({
   view(id, { props }): VNode {
+    const { letter, disabled } = props;
     return div(
-      `#${id}.tile`,
+      `#${id}.tile${disabled ? ".disabled" : ""}`,
       {
-        attrs: { draggable: "true" },
-        on: {
-          dragstart: props.onDragLetterStart,
-          dragend: props.onDragLetterEnd,
-          touchstart: props.onTouchStart,
-          touchmove: props.onTouchMove,
-          touchend: props.onTouchEnd
-        }
+        attrs: { draggable: disabled ? "false" : "true" },
+        on: disabled
+          ? {}
+          : {
+              dragstart: props.onDragLetterStart,
+              dragend: props.onDragLetterEnd,
+              touchstart: props.onTouchStart,
+              touchmove: props.onTouchMove,
+              touchend: props.onTouchEnd
+            }
       },
-      span(".tile-letter", props.letter.toUpperCase())
+      span(".tile-letter", letter.toUpperCase())
     );
   }
 }));
