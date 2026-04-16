@@ -22,6 +22,7 @@ export type RootProps = Readonly<{
 export type RootState = Readonly<{
   celebrationImgIndex: string;
   celebrationVisible: boolean;
+  wordComplete: boolean;
   letterSlots: (string | null)[];
   draggedLetter: string | null;
   rewardsDisplayAmount: number;
@@ -55,6 +56,7 @@ const app = component<Component>(({ action, task }) => ({
   state: (props): RootState => ({
     celebrationImgIndex: getLocalStorage(localStorageKeys.celebrationImgIndex) || "0",
     celebrationVisible: false,
+    wordComplete: false,
     letterSlots: props.word.split("").map(() => null),
     draggedLetter: null,
     rewardsDisplayAmount: getRewardsDisplayAmount()
@@ -73,7 +75,12 @@ const app = component<Component>(({ action, task }) => ({
         (slot, i) => slot !== null && slot.toLowerCase() === props.word[i].toLowerCase()
       );
       return {
-        state: { ...state, draggedLetter: null, letterSlots: newLetterSlots },
+        state: {
+          ...state,
+          draggedLetter: null,
+          letterSlots: newLetterSlots,
+          wordComplete: isComplete
+        },
         next: isComplete ? task("CelebrateTask") : task("SpeakString", { word: draggedLetter })
       };
     },
@@ -113,7 +120,7 @@ const app = component<Component>(({ action, task }) => ({
       perform: (): Promise<void> => {
         const name = window.localStorage.getItem("spelling-name") || "";
         speak(`Awesome job ${name}! You are rocking it! Go go go`);
-        return new Promise((resolve) => setTimeout(resolve, 800));
+        return new Promise((resolve) => setTimeout(resolve, 1000));
       },
       success: (): Next => action("ShowCelebration")
     }),
@@ -163,7 +170,11 @@ const app = component<Component>(({ action, task }) => ({
           "↻"
         )
       ]),
-      wordGrid(`${id}-word`, { word: props.word, letterSlots: state.letterSlots }),
+      wordGrid(`${id}-word`, {
+        word: props.word,
+        letterSlots: state.letterSlots,
+        complete: state.wordComplete
+      }),
       celebration(`${id}-celebration`, {
         visible: state.celebrationVisible,
         onTap: action("Reload")

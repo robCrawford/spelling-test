@@ -2,12 +2,14 @@ import { component, html, VNode } from "cr-26";
 import type { RootActionPayloads } from "../app";
 import letterTile from "./letterTile";
 import letterSlot from "./letterSlot";
+import { shuffleNotInOrder } from "../utils/words";
 
 const { div } = html;
 
 export type Props = Readonly<{
   word: string;
   letterSlots: (string | null)[];
+  complete: boolean;
 }>;
 
 type Component = {
@@ -24,6 +26,7 @@ export type NormalizedEvent = Event & {
 
 const wordGrid = component<Component>(({ rootAction }) => {
   let dragClone: HTMLElement | null = null;
+  let shuffledLetters: string[] | null = null;
 
   const onTouchStart =
     (letter: string) =>
@@ -91,7 +94,8 @@ const wordGrid = component<Component>(({ rootAction }) => {
   return {
     view(id, { props }): VNode {
       const letters = props.word.split("");
-      const shuffled = [...letters].sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+      shuffledLetters ??= shuffleNotInOrder(letters);
+      const shuffled = shuffledLetters;
 
       const correctCounts = props.letterSlots.reduce<Record<string, number>>((acc, slot, i) => {
         if (slot !== null && slot.toLowerCase() === letters[i].toLowerCase()) {
@@ -112,7 +116,7 @@ const wordGrid = component<Component>(({ rootAction }) => {
         return false;
       });
 
-      return div(`#${id}.word-grid`, [
+      return div(`#${id}.word-grid${props.complete ? ".word-complete" : ""}`, [
         div(
           ".letterSlots-row",
           letters.map((letter, i) => {

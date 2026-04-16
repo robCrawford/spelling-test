@@ -80,6 +80,21 @@ html, body {
   gap: 3rem;
 }
 
+@keyframes word-complete-pulse {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 0px rgba(76, 175, 80, 0));
+  }
+  50% {
+    transform: scale(1.06);
+    filter: drop-shadow(0 0 18px rgba(76, 175, 80, 0.9));
+  }
+}
+
+.word-grid.word-complete .letterSlots-row {
+  animation: word-complete-pulse 0.4s ease-in-out infinite;
+}
+
 .letterSlots-row,
 .tiles-pool {
   display: flex;
