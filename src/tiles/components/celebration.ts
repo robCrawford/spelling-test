@@ -70,7 +70,7 @@ const celebration = component<Component>(() => ({
         div(".confetti-burst", makeParticles()),
         img(".celebration-img", {
           attrs: {
-            src: characterUrls[Number(rootState.characterIndex) % characterUrls.length],
+            src: characterUrls[Number(rootState.celebrationImgIndex) % characterUrls.length],
             alt: ""
           }
         }),

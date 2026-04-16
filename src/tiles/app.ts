@@ -12,21 +12,21 @@ export type RootProps = Readonly<{
 }>;
 
 export type RootState = Readonly<{
-  characterIndex: string;
-  slots: (string | null)[];
-  dragging: string | null;
+  celebrationImgIndex: string;
+  letterSlots: (string | null)[];
+  draggedLetter: string | null;
 }>;
 
 export type RootActionPayloads = Readonly<{
-  DragStart: { letter: string };
+  DragLetterStart: { letter: string };
   DropLetter: { slotIndex: number };
-  DragEnd: null;
+  DragLetterEnd: null;
   Reload: null;
 }>;
 
 export type RootTaskPayloads = Readonly<{
-  SpeakWord: { word: string };
-  ReloadPage: { newCharacterIndex: string };
+  SpeakString: { word: string };
+  ReloadPage: { newcelebrationImgIndex: string };
 }>;
 
 export type Component = {
@@ -38,58 +38,60 @@ export type Component = {
 
 const app = component<Component>(({ action, task }) => ({
   state: (props): RootState => ({
-    characterIndex: getLocalStorage(localStorageKeys.characterIndex) || "0",
-    slots: props.word.split("").map(() => null),
-    dragging: null
+    celebrationImgIndex: getLocalStorage(localStorageKeys.celebrationImgIndex) || "0",
+    letterSlots: props.word.split("").map(() => null),
+    draggedLetter: null
   }),
 
   actions: {
-    DragStart: ({ letter }, { state }): { state: RootState } => ({
-      state: { ...state, dragging: letter }
+    DragLetterStart: ({ letter }, { state }): { state: RootState } => ({
+      state: { ...state, draggedLetter: letter }
     }),
 
     DropLetter: ({ slotIndex }, { state }): { state: RootState; next?: Next } => {
-      const { dragging } = state;
-      if (dragging === null) return { state };
+      const { draggedLetter } = state;
+      if (draggedLetter === null) return { state };
       return {
         state: {
           ...state,
-          dragging: null,
-          slots: state.slots.map((s, i) => (i === slotIndex ? dragging : s))
+          draggedLetter: null,
+          letterSlots: state.letterSlots.map((s, i) => (i === slotIndex ? draggedLetter : s))
         },
-        next: task("SpeakWord", { word: dragging })
+        next: task("SpeakString", { word: draggedLetter })
       };
     },
 
-    DragEnd: (_, { state }): { state: RootState; next?: Next } => ({
-      state: state.dragging !== null ? { ...state, dragging: null } : state,
-      ...(state.dragging !== null && { next: task("SpeakWord", { word: state.dragging }) })
+    DragLetterEnd: (_, { state }): { state: RootState; next?: Next } => ({
+      state: state.draggedLetter !== null ? { ...state, draggedLetter: null } : state,
+      ...(state.draggedLetter !== null && {
+        next: task("SpeakString", { word: state.draggedLetter })
+      })
     }),
 
     Reload: (_, { state }): { state: RootState; next: Next } => ({
       state,
       next: task("ReloadPage", {
-        newCharacterIndex: String(Number(state.characterIndex) + 1)
+        newcelebrationImgIndex: String(Number(state.celebrationImgIndex) + 1)
       })
     })
   },
 
   tasks: {
-    SpeakWord: ({ word }): Task<void, RootProps, RootState> => ({
+    SpeakString: ({ word }): Task<void, RootProps, RootState> => ({
       perform: (): void => {
         speak(word);
       }
     }),
-    ReloadPage: ({ newCharacterIndex }): Task<void, RootProps, RootState> => ({
+    ReloadPage: ({ newcelebrationImgIndex }): Task<void, RootProps, RootState> => ({
       perform: (): void => {
-        setLocalStorage(localStorageKeys.characterIndex, newCharacterIndex);
+        setLocalStorage(localStorageKeys.celebrationImgIndex, newcelebrationImgIndex);
         reloadPage();
       }
     })
   },
 
   view(id, { props, state }): VNode {
-    const isComplete = state.slots.every(
+    const isComplete = state.letterSlots.every(
       (slot, i) => slot !== null && slot.toLowerCase() === props.word[i].toLowerCase()
     );
     return div(`#${id}.game`, [
@@ -97,12 +99,12 @@ const app = component<Component>(({ action, task }) => ({
         ".game-title",
         {
           on: {
-            click: task("SpeakWord", { word: props.word })
+            click: task("SpeakString", { word: props.word })
           }
         },
         "Spell It!"
       ),
-      wordGrid(`${id}-word`, { word: props.word, slots: state.slots }),
+      wordGrid(`${id}-word`, { word: props.word, letterSlots: state.letterSlots }),
       celebration(`${id}-celebration`, { visible: isComplete, onTap: action("Reload") })
     ]);
   }

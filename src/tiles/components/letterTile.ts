@@ -6,8 +6,8 @@ type EventHandler = (e: Event) => void;
 
 export type Props = Readonly<{
   letter: string;
-  onDragStart: ActionThunk;
-  onDragEnd: ActionThunk;
+  onDragLetterStart: ActionThunk;
+  onDragLetterEnd: ActionThunk;
   onTouchStart: EventHandler;
   onTouchMove: EventHandler;
   onTouchEnd: EventHandler;
@@ -24,8 +24,8 @@ const letterTile = component<Component>(() => ({
       {
         attrs: { draggable: "true" },
         on: {
-          dragstart: props.onDragStart,
-          dragend: props.onDragEnd,
+          dragstart: props.onDragLetterStart,
+          dragend: props.onDragLetterEnd,
           touchstart: props.onTouchStart,
           touchmove: props.onTouchMove,
           touchend: props.onTouchEnd

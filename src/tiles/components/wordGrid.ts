@@ -7,7 +7,7 @@ const { div } = html;
 
 export type Props = Readonly<{
   word: string;
-  slots: (string | null)[];
+  letterSlots: (string | null)[];
 }>;
 
 type Component = {
@@ -47,7 +47,7 @@ const wordGrid = component<Component>(({ rootAction }) => {
           margin: "0"
         });
         document.body.appendChild(dragClone);
-        rootAction("DragStart", { letter })(e);
+        rootAction("DragLetterStart", { letter })(e);
         // Suppress initial touch coords so moveTouchDrag centres immediately
         moveTouchDrag(touch.clientX, touch.clientY);
       }
@@ -84,7 +84,7 @@ const wordGrid = component<Component>(({ rootAction }) => {
           return;
         }
       }
-      rootAction("DragEnd")(e);
+      rootAction("DragLetterEnd")(e);
     }
   };
 
@@ -95,9 +95,9 @@ const wordGrid = component<Component>(({ rootAction }) => {
 
       return div(`#${id}.word-grid`, [
         div(
-          ".slots-row",
+          ".letterSlots-row",
           letters.map((letter, i) => {
-            const dropped = props.slots[i] ?? null;
+            const dropped = props.letterSlots[i] ?? null;
             const isCorrect =
               dropped !== null ? dropped.toLowerCase() === letter.toLowerCase() : null;
             return letterSlot(`${id}-slot-${i}`, {
@@ -112,8 +112,8 @@ const wordGrid = component<Component>(({ rootAction }) => {
           shuffled.map((letter, i) =>
             letterTile(`${id}-tile-${i}`, {
               letter,
-              onDragStart: rootAction("DragStart", { letter }),
-              onDragEnd: rootAction("DragEnd"),
+              onDragLetterStart: rootAction("DragLetterStart", { letter }),
+              onDragLetterEnd: rootAction("DragLetterEnd"),
               onTouchStart: onTouchStart(letter),
               onTouchMove,
               onTouchEnd

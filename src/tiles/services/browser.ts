@@ -1,7 +1,7 @@
 const localStoragePrefix = "tiles-";
 
 export const localStorageKeys = {
-  characterIndex: "character-index"
+  celebrationImgIndex: "celebration-img"
 };
 
 export function reloadPage(): void {
