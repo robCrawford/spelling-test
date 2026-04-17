@@ -8,7 +8,8 @@ const characterUrls = [
   new URL("../img/hello-kitty.svg", import.meta.url).href,
   new URL("../img/kuromi.svg", import.meta.url).href,
   new URL("../img/cinnamoroll.svg", import.meta.url).href,
-  new URL("../img/mymelody.svg", import.meta.url).href
+  new URL("../img/mymelody.svg", import.meta.url).href,
+  new URL("../img/pompompurin.svg", import.meta.url).href
 ];
 
 characterUrls.forEach((href) => {

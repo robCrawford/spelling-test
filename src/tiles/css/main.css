@@ -183,7 +183,7 @@ html, body {
   width: auto;
   left: 0;
   top: 50%;
-  transform: translate(-42%, -55%);
+  transform: translate(-50%, -55%);
   filter: drop-shadow(4px 8px 20px rgba(0, 0, 0, 0.45));
 }
 

@@ -124,14 +124,14 @@ const app = component<Component>(({ action, task }) => ({
     CelebrateTask: (): Task<void, RootProps, RootState> => ({
       perform: (): Promise<void> => {
         const name = window.localStorage.getItem("spelling-name") || "";
-        speak(`Awesome job ${name}! You are rocking it! Go go go`);
+        speak(`Good job ${name}! Go go go`);
         return new Promise((resolve) => setTimeout(resolve, 1000));
       },
       success: (): Next => action("ShowCelebration")
     }),
 
     AutoReloadTask: (): Task<void, RootProps, RootState> => ({
-      perform: (): Promise<void> => new Promise((resolve) => setTimeout(resolve, 4000)),
+      perform: (): Promise<void> => new Promise((resolve) => setTimeout(resolve, 3000)),
       success: (): Next => action("Reload")
     }),
 
