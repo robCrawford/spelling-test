@@ -28,32 +28,34 @@ const wordGrid = component<Component>(({ rootAction }) => {
   let dragClone: HTMLElement | null = null;
   let shuffledLetters: string[] | null = null;
 
+  const attachDragClone = (e: NormalizedEvent): void => {
+    const target = e.currentTarget;
+    const rect = target?.getBoundingClientRect?.();
+    const cloned = target?.cloneNode?.(true) ?? null;
+    dragClone = cloned instanceof HTMLElement ? cloned : null;
+    const touch = e.touches?.[0];
+    if (touch && dragClone && rect) {
+      Object.assign(dragClone.style, {
+        position: "fixed",
+        left: `${rect.left}px`,
+        top: `${rect.top}px`,
+        width: `${rect.width}px`,
+        height: `${rect.height}px`,
+        pointerEvents: "none",
+        opacity: "0.85",
+        zIndex: "1000",
+        margin: "0"
+      });
+      document.body.appendChild(dragClone);
+      moveTouchDrag(touch.clientX, touch.clientY);
+    }
+  };
+
   const onTouchStart =
     (letter: string) =>
     (e: NormalizedEvent): void => {
-      const touch = e.touches?.[0];
-      const target = e.currentTarget;
-      const rect = target?.getBoundingClientRect?.();
-      const cloned = target?.cloneNode?.(true) ?? null;
-      dragClone = cloned instanceof HTMLElement ? cloned : null;
-
-      if (touch && dragClone && rect) {
-        Object.assign(dragClone.style, {
-          position: "fixed",
-          left: `${rect.left}px`,
-          top: `${rect.top}px`,
-          width: `${rect.width}px`,
-          height: `${rect.height}px`,
-          pointerEvents: "none",
-          opacity: "0.85",
-          zIndex: "1000",
-          margin: "0"
-        });
-        document.body.appendChild(dragClone);
-        rootAction("DragLetterStart", { letter })(e);
-        // Suppress initial touch coords so moveTouchDrag centres immediately
-        moveTouchDrag(touch.clientX, touch.clientY);
-      }
+      attachDragClone(e);
+      rootAction("DragLetterStart", { letter })(e);
     };
 
   const moveTouchDrag = (clientX: number, clientY: number): void => {
@@ -123,10 +125,15 @@ const wordGrid = component<Component>(({ rootAction }) => {
             const dropped = props.letterSlots[i] ?? null;
             const isCorrect =
               dropped !== null ? dropped.toLowerCase() === letter.toLowerCase() : null;
+            const isDraggable = !!dropped && !props.complete;
             return letterSlot(`${id}-slot-${i}`, {
               droppedLetter: dropped,
               isCorrect,
-              onDrop: rootAction("DropLetter", { slotIndex: i })
+              draggable: isDraggable,
+              onDrop: rootAction("DropLetter", { slotIndex: i }),
+              onDragFromSlot: rootAction("DragFromSlot", { slotIndex: i, letter: dropped ?? "" }),
+              onDragEnd: rootAction("DragLetterEnd"),
+              onReset: rootAction("ClearSlot", { slotIndex: i })
             });
           })
         ),

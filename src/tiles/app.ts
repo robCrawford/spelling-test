@@ -31,6 +31,8 @@ export type RootState = Readonly<{
 
 export type RootActionPayloads = Readonly<{
   DragLetterStart: { letter: string };
+  DragFromSlot: { slotIndex: number; letter: string };
+  ClearSlot: { slotIndex: number };
   DropLetter: { slotIndex: number };
   DragLetterEnd: null;
   ShowCelebration: null;
@@ -67,6 +69,21 @@ const app = component<Component>(({ action, task }) => ({
   actions: {
     DragLetterStart: ({ letter }, { state }): { state: RootState } => ({
       state: { ...state, draggedLetter: letter }
+    }),
+
+    DragFromSlot: ({ slotIndex, letter }, { state }): { state: RootState } => ({
+      state: {
+        ...state,
+        draggedLetter: letter,
+        letterSlots: state.letterSlots.map((s, i) => (i === slotIndex ? null : s))
+      }
+    }),
+
+    ClearSlot: ({ slotIndex }, { state }): { state: RootState } => ({
+      state: {
+        ...state,
+        letterSlots: state.letterSlots.map((s, i) => (i === slotIndex ? null : s))
+      }
     }),
 
     DropLetter: ({ slotIndex }, { state, props }): { state: RootState; next?: Next } => {

@@ -128,6 +128,11 @@ html, body {
   justify-content: center;
 }
 
+.tile-slot.draggable {
+  cursor: grab;
+  touch-action: none;
+}
+
 .tile-slot.correct {
   border: 4px solid #4caf50;
   background: rgba(76, 175, 80, 0.18);
