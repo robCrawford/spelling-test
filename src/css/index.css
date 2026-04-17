@@ -78,13 +78,18 @@ body {
   position: absolute;
   top: 20px;
   left: 70px;
-  color: white
+  color: white;
 }
 #nav > * {
   padding: 0 5px;
 }
 #nav a {
   cursor: pointer;
+}
+@media (max-width: 400px) {
+  #nav {
+    max-width: 190px;
+  }
 }
 .reset-link {
   position: relative;

@@ -42,6 +42,7 @@ export type RootTaskPayloads = Readonly<{
   SpeakString: { word: string };
   RepeatWordTask: { word: string; hintId: string };
   CelebrateTask: null;
+  AutoReloadTask: null;
   ReloadPage: { newcelebrationImgIndex: string };
   RedeemRewardsTask: null;
 }>;
@@ -82,7 +83,9 @@ const app = component<Component>(({ action, task }) => ({
           letterSlots: newLetterSlots,
           wordComplete: isComplete
         },
-        next: isComplete ? task("CelebrateTask") : task("SpeakString", { word: draggedLetter })
+        next: isComplete
+          ? [task("SpeakString", { word: `${props.word}.` }), task("CelebrateTask")]
+          : task("SpeakString", { word: draggedLetter })
       };
     },
 
@@ -93,8 +96,9 @@ const app = component<Component>(({ action, task }) => ({
       })
     }),
 
-    ShowCelebration: (_, { state }): { state: RootState } => ({
-      state: { ...state, celebrationVisible: true }
+    ShowCelebration: (_, { state }): { state: RootState; next: Next } => ({
+      state: { ...state, celebrationVisible: true },
+      next: task("AutoReloadTask")
     }),
 
     Reload: (_, { state }): { state: RootState; next: Next } => ({
@@ -124,6 +128,11 @@ const app = component<Component>(({ action, task }) => ({
         return new Promise((resolve) => setTimeout(resolve, 1000));
       },
       success: (): Next => action("ShowCelebration")
+    }),
+
+    AutoReloadTask: (): Task<void, RootProps, RootState> => ({
+      perform: (): Promise<void> => new Promise((resolve) => setTimeout(resolve, 4000)),
+      success: (): Next => action("Reload")
     }),
 
     RepeatWordTask: ({ word, hintId }): Task<void, RootProps, RootState> => ({
@@ -160,7 +169,15 @@ const app = component<Component>(({ action, task }) => ({
     return div(`#${id}.game`, [
       div(".game-title", "Spell It!"),
       div(".word-hint-row", [
-        div(".word-hint", [div(`#${id}-word-hint-text.word-hint-text`, props.word)]),
+        div(
+          ".word-hint",
+          {
+            on: {
+              click: task("RepeatWordTask", { word: props.word, hintId: `${id}-word-hint-text` })
+            }
+          },
+          [div(`#${id}-word-hint-text.word-hint-text`, props.word)]
+        ),
         div(
           ".game-title-repeat",
           {
