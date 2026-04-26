@@ -102,7 +102,7 @@ const app = component<Component>(({ action, task }) => ({
         },
         next: isComplete
           ? [task("SpeakString", { word: `${props.word}.` }), task("CelebrateTask")]
-          : task("SpeakString", { word: draggedLetter })
+          : task("SpeakString", { word: draggedLetter.toLowerCase() })
       };
     },
 
