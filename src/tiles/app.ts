@@ -34,19 +34,19 @@ export type RootActionPayloads = Readonly<{
   DragFromSlot: { slotIndex: number; letter: string };
   ClearSlot: { slotIndex: number };
   DropLetter: { slotIndex: number };
-  DragLetterEnd: null;
-  ShowCelebration: null;
-  Reload: null;
-  RedeemRewards: null;
+  DragLetterEnd: undefined;
+  ShowCelebration: undefined;
+  Reload: undefined;
+  RedeemRewards: undefined;
 }>;
 
 export type RootTaskPayloads = Readonly<{
   SpeakString: { word: string };
   RepeatWordTask: { word: string; hintId: string };
-  CelebrateTask: null;
-  AutoReloadTask: null;
+  CelebrateTask: undefined;
+  AutoReloadTask: undefined;
   ReloadPage: { newcelebrationImgIndex: string };
-  RedeemRewardsTask: null;
+  RedeemRewardsTask: undefined;
 }>;
 
 export type Component = {

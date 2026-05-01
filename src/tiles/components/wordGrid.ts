@@ -1,4 +1,4 @@
-import { component, html, VNode } from "cr-26";
+import { component, html, NormalizedEvent, VNode } from "cr-26";
 import type { RootActionPayloads } from "../app";
 import letterTile from "./letterTile";
 import letterSlot from "./letterSlot";
@@ -16,13 +16,6 @@ type Component = {
   Props: Props;
   RootActionPayloads: RootActionPayloads;
 };
-
-type TargetInputProps = EventTarget & Partial<HTMLInputElement> & Partial<Node>;
-
-export type NormalizedEvent = Event & {
-  target: TargetInputProps | null;
-  currentTarget: TargetInputProps | null;
-} & Partial<TouchEvent>;
 
 const wordGrid = component<Component>(({ rootAction }) => {
   let dragClone: HTMLElement | null = null;
