@@ -21,7 +21,7 @@ let name = '';
 
 // Entries here will be the only words tested
 // NOTE: update fieldCount for rewards calculation!
-let tempOverrideWords = ['house', 'too', 'could', 'put', 'old'];
+let tempOverrideWords = ["I'm", 'by', 'time', 'day', 'made'];
 
 // Clear local storage prior to latest key
 // NOTE: changing this removes all previous data from the browser!
