@@ -182,7 +182,7 @@ const app = component<Component>(({ action, task }) => ({
     })
   },
 
-  view(id, { props, state }): VNode {
+  view({ id, props, state }): VNode {
     return div(`#${id}.game`, [
       div(".game-title", "Spell It!"),
       div(".word-hint-row", [

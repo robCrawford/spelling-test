@@ -87,7 +87,7 @@ const wordGrid = component<Component>(({ rootAction }) => {
   };
 
   return {
-    view(id, { props }): VNode {
+    view({ id, props }): VNode {
       const letters = props.word.split("");
       shuffledLetters ??= shuffleNotInOrder(letters);
       const shuffled = shuffledLetters;

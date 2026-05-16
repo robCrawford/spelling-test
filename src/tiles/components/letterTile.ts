@@ -19,7 +19,7 @@ type Component = {
 };
 
 const letterTile = component<Component>(() => ({
-  view(id, { props }): VNode {
+  view({ id, props }): VNode {
     const { letter, disabled } = props;
     return div(
       `#${id}.tile${disabled ? ".disabled" : ""}`,

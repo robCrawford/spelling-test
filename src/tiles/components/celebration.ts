@@ -64,7 +64,7 @@ function makeParticles(): VNode[] {
 }
 
 const celebration = component<Component>(() => ({
-  view(id, { props, rootState }): VNode {
+  view({ id, props, rootState }): VNode {
     if (!props.visible) return div(`#${id}`);
     return div(`#${id}.celebration`, { on: { click: props.onTap } }, [
       div(".celebration-backdrop"),

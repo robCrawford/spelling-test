@@ -17,7 +17,7 @@ type Component = {
 };
 
 const letterSlot = component<Component>(() => ({
-  view(id, { props }): VNode {
+  view({ id, props }): VNode {
     const { droppedLetter, isCorrect, draggable, onDrop, onDragFromSlot, onDragEnd, onReset } =
       props;
     const statusClass = isCorrect === null ? "" : isCorrect ? ".correct" : ".incorrect";
