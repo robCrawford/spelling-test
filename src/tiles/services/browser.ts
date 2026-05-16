@@ -33,3 +33,13 @@ export function redeemAllRewards(): void {
   const total = Number(getLocalStorage(localStorageKeys.rewards) || 0);
   setLocalStorage(localStorageKeys.redeemed, String(total));
 }
+
+export function preloadImages(urls: string[]): void {
+  urls.forEach((href) => {
+    const link = document.createElement("link");
+    link.rel = "preload";
+    link.as = "image";
+    link.href = href;
+    document.head.appendChild(link);
+  });
+}

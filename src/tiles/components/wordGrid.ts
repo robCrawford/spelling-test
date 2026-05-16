@@ -1,4 +1,4 @@
-import { component, html, NormalizedEvent, VNode } from "cr-26";
+import { component, html, Next, Task, VNode } from "cr-26";
 import type { RootActionPayloads } from "../app";
 import letterTile from "./letterTile";
 import letterSlot from "./letterSlot";
@@ -12,46 +12,28 @@ export type Props = Readonly<{
   complete: boolean;
 }>;
 
+type State = Readonly<{ shuffledLetters: string[] }>;
+
 type Component = {
   Props: Props;
+  State: State;
+  ActionPayloads: Readonly<{
+    TouchStart: { letter: string; tileIndex: number };
+    TouchMove: undefined;
+    TouchEnd: undefined;
+  }>;
+  TaskPayloads: Readonly<{
+    AttachDragClone: { tileId: string; clientX: number; clientY: number };
+    MoveDragClone: { clientX: number; clientY: number };
+    FinalizeDrop: { clientX: number; clientY: number };
+  }>;
   RootActionPayloads: RootActionPayloads;
 };
 
-const wordGrid = component<Component>(({ rootAction }) => {
+const wordGrid = component<Component>(({ action, task, rootAction }) => {
   let dragClone: HTMLElement | null = null;
-  let shuffledLetters: string[] | null = null;
 
-  const attachDragClone = (e: NormalizedEvent): void => {
-    const target = e.currentTarget;
-    const rect = target?.getBoundingClientRect?.();
-    const cloned = target?.cloneNode?.(true) ?? null;
-    dragClone = cloned instanceof HTMLElement ? cloned : null;
-    const touch = e.touches?.[0];
-    if (touch && dragClone && rect) {
-      Object.assign(dragClone.style, {
-        position: "fixed",
-        left: `${rect.left}px`,
-        top: `${rect.top}px`,
-        width: `${rect.width}px`,
-        height: `${rect.height}px`,
-        pointerEvents: "none",
-        opacity: "0.85",
-        zIndex: "1000",
-        margin: "0"
-      });
-      document.body.appendChild(dragClone);
-      moveTouchDrag(touch.clientX, touch.clientY);
-    }
-  };
-
-  const onTouchStart =
-    (letter: string) =>
-    (e: NormalizedEvent): void => {
-      attachDragClone(e);
-      rootAction("DragLetterStart", { letter })(e);
-    };
-
-  const moveTouchDrag = (clientX: number, clientY: number): void => {
+  const moveDragClone = (clientX: number, clientY: number): void => {
     if (!dragClone) return;
     const halfW = dragClone.offsetWidth / 2;
     const halfH = dragClone.offsetHeight / 2;
@@ -59,38 +41,92 @@ const wordGrid = component<Component>(({ rootAction }) => {
     dragClone.style.top = `${clientY - halfH}px`;
   };
 
-  const onTouchMove = (e: NormalizedEvent): void => {
-    const touch = e.touches?.[0];
-    if (touch) {
-      moveTouchDrag(touch.clientX, touch.clientY);
-    }
-  };
-
-  const onTouchEnd = (e: NormalizedEvent): void => {
-    if (dragClone) {
-      dragClone.remove();
-      dragClone = null;
-    }
-    const touch = e.changedTouches?.[0];
-    if (touch) {
-      const elements = document.elementsFromPoint(touch.clientX, touch.clientY);
-      const slotEl = elements.find((el) => el.classList.contains("tile-slot"));
-      if (slotEl) {
-        const match = slotEl.id.match(/-slot-(\d+)$/);
-        if (match) {
-          rootAction("DropLetter", { slotIndex: Number(match[1]) })(e);
-          return;
-        }
-      }
-      rootAction("DragLetterEnd")(e);
-    }
-  };
-
   return {
-    view({ id, props }): VNode {
+    state: (props): State => ({ shuffledLetters: shuffleNotInOrder(props.word.split("")) }),
+
+    actions: {
+      TouchStart: ({ letter, tileIndex }, { id, state, event }): { state: State; next: Next } => ({
+        state,
+        next: [
+          rootAction("DragLetterStart", { letter }),
+          task("AttachDragClone", {
+            tileId: `${id}-tile-${tileIndex}`,
+            clientX: event?.touches?.[0]?.clientX ?? 0,
+            clientY: event?.touches?.[0]?.clientY ?? 0
+          })
+        ]
+      }),
+
+      TouchMove: (_, { state, event }): { state: State; next: Next } => ({
+        state,
+        next: task("MoveDragClone", {
+          clientX: event?.touches?.[0]?.clientX ?? 0,
+          clientY: event?.touches?.[0]?.clientY ?? 0
+        })
+      }),
+
+      TouchEnd: (_, { state, event }): { state: State; next: Next } => ({
+        state,
+        next: task("FinalizeDrop", {
+          clientX: event?.changedTouches?.[0]?.clientX ?? 0,
+          clientY: event?.changedTouches?.[0]?.clientY ?? 0
+        })
+      })
+    },
+
+    tasks: {
+      AttachDragClone: ({ tileId, clientX, clientY }): Task<void, Props, State> => ({
+        perform: (): void => {
+          const target = document.getElementById(tileId);
+          const rect = target?.getBoundingClientRect?.();
+          const cloned = target?.cloneNode?.(true) ?? null;
+          dragClone = cloned instanceof HTMLElement ? cloned : null;
+          if (dragClone && rect) {
+            Object.assign(dragClone.style, {
+              position: "fixed",
+              left: `${rect.left}px`,
+              top: `${rect.top}px`,
+              width: `${rect.width}px`,
+              height: `${rect.height}px`,
+              pointerEvents: "none",
+              opacity: "0.85",
+              zIndex: "1000",
+              margin: "0"
+            });
+            document.body.appendChild(dragClone);
+            moveDragClone(clientX, clientY);
+          }
+        }
+      }),
+
+      MoveDragClone: ({ clientX, clientY }): Task<void, Props, State> => ({
+        perform: (): void => {
+          moveDragClone(clientX, clientY);
+        }
+      }),
+
+      FinalizeDrop: ({ clientX, clientY }): Task<number | null, Props, State> => ({
+        perform: (): number | null => {
+          if (dragClone) {
+            dragClone.remove();
+            dragClone = null;
+          }
+          const elements = document.elementsFromPoint(clientX, clientY);
+          const slotEl = elements.find((el) => el.classList.contains("tile-slot"));
+          if (slotEl) {
+            const match = slotEl.id.match(/-slot-(\d+)$/);
+            if (match) return Number(match[1]);
+          }
+          return null;
+        },
+        success: (slotIndex): Next =>
+          slotIndex !== null ? rootAction("DropLetter", { slotIndex }) : rootAction("DragLetterEnd")
+      })
+    },
+
+    view({ id, state, props }): VNode {
       const letters = props.word.split("");
-      shuffledLetters ??= shuffleNotInOrder(letters);
-      const shuffled = shuffledLetters;
+      const shuffled = state.shuffledLetters;
 
       const correctCounts = props.letterSlots.reduce<Record<string, number>>((acc, slot, i) => {
         if (slot !== null && slot.toLowerCase() === letters[i].toLowerCase()) {
@@ -138,9 +174,9 @@ const wordGrid = component<Component>(({ rootAction }) => {
               disabled: disabledTiles[i],
               onDragLetterStart: rootAction("DragLetterStart", { letter }),
               onDragLetterEnd: rootAction("DragLetterEnd"),
-              onTouchStart: onTouchStart(letter),
-              onTouchMove,
-              onTouchEnd
+              onTouchStart: action("TouchStart", { letter, tileIndex: i }),
+              onTouchMove: action("TouchMove"),
+              onTouchEnd: action("TouchEnd")
             })
           )
         )

@@ -1,4 +1,4 @@
-import { component, html, mount, Next, Task, VNode } from "cr-26";
+import { component, html, Next, Task, VNode } from "cr-26";
 import wordGrid from "./components/wordGrid";
 import celebration from "./components/celebration";
 import {
@@ -11,7 +11,7 @@ import {
   setLocalStorage
 } from "./services/browser";
 import { speak } from "../utils";
-import { getGameWord } from "./services/data";
+
 import { config } from "./config";
 
 const { div } = html;
@@ -106,12 +106,13 @@ const app = component<Component>(({ action, task }) => ({
       };
     },
 
-    DragLetterEnd: (_, { state }): { state: RootState; next?: Next } => ({
-      state: state.draggedLetter !== null ? { ...state, draggedLetter: null } : state,
-      ...(state.draggedLetter !== null && {
+    DragLetterEnd: (_, { state }): { state: RootState; next?: Next } => {
+      if (state.draggedLetter === null) return { state };
+      return {
+        state: { ...state, draggedLetter: null },
         next: task("SpeakString", { word: state.draggedLetter })
-      })
-    }),
+      };
+    },
 
     ShowCelebration: (_, { state }): { state: RootState; next: Next } => ({
       state: { ...state, celebrationVisible: true },
@@ -222,10 +223,5 @@ const app = component<Component>(({ action, task }) => ({
     ]);
   }
 }));
-
-document.addEventListener("DOMContentLoaded", () => {
-  document.addEventListener("dragover", (e) => e.preventDefault());
-  mount({ app, props: { word: getGameWord() } });
-});
 
 export default app;

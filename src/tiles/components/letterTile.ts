@@ -2,16 +2,14 @@ import { ActionThunk, component, html, VNode } from "cr-26";
 
 const { div, span } = html;
 
-type EventHandler = (e: Event) => void;
-
 export type Props = Readonly<{
   letter: string;
   disabled: boolean;
   onDragLetterStart: ActionThunk;
   onDragLetterEnd: ActionThunk;
-  onTouchStart: EventHandler;
-  onTouchMove: EventHandler;
-  onTouchEnd: EventHandler;
+  onTouchStart: ActionThunk;
+  onTouchMove: ActionThunk;
+  onTouchEnd: ActionThunk;
 }>;
 
 type Component = {

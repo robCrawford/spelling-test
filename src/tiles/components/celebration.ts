@@ -4,21 +4,13 @@ import { config } from "../config";
 
 const { div, h2, img } = html;
 
-const characterUrls = [
+export const characterUrls = [
   new URL("../img/hello-kitty.svg", import.meta.url).href,
   new URL("../img/kuromi.svg", import.meta.url).href,
   new URL("../img/cinnamoroll.svg", import.meta.url).href,
   new URL("../img/mymelody.svg", import.meta.url).href,
   new URL("../img/pompompurin.svg", import.meta.url).href
 ];
-
-characterUrls.forEach((href) => {
-  const link = document.createElement("link");
-  link.rel = "preload";
-  link.as = "image";
-  link.href = href;
-  document.head.appendChild(link);
-});
 
 export type Props = Readonly<{
   visible: boolean;
