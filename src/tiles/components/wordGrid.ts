@@ -1,36 +1,44 @@
-import { component, html, Next, Task, VNode } from "cr-26";
-import type { RootActionPayloads } from "../app";
+import { ActionThunk, component, html, Next, Task, VNode } from "cr-26";
 import letterTile from "./letterTile";
 import letterSlot from "./letterSlot";
 import { shuffleNotInOrder } from "../utils/words";
+import { speak } from "../../utils";
 
 const { div } = html;
 
 export type Props = Readonly<{
   word: string;
-  letterSlots: (string | null)[];
-  complete: boolean;
+  onComplete: ActionThunk;
 }>;
 
-type State = Readonly<{ shuffledLetters: string[] }>;
+type State = Readonly<{
+  shuffledLetters: string[];
+  letterSlots: (string | null)[];
+  draggedLetter: string | null;
+}>;
 
 type Component = {
   Props: Props;
   State: State;
   ActionPayloads: Readonly<{
+    DragLetterStart: { letter: string };
+    DragFromSlot: { slotIndex: number; letter: string };
+    ClearSlot: { slotIndex: number };
+    DropLetter: { slotIndex: number };
+    DragLetterEnd: undefined;
     TouchStart: { letter: string; tileIndex: number };
     TouchMove: undefined;
     TouchEnd: undefined;
   }>;
   TaskPayloads: Readonly<{
+    SpeakString: { word: string };
     AttachDragClone: { tileId: string; clientX: number; clientY: number };
     MoveDragClone: { clientX: number; clientY: number };
     FinalizeDrop: { clientX: number; clientY: number };
   }>;
-  RootActionPayloads: RootActionPayloads;
 };
 
-const wordGrid = component<Component>(({ action, task, rootAction }) => {
+const wordGrid = component<Component>(({ action, task }) => {
   let dragClone: HTMLElement | null = null;
 
   const moveDragClone = (clientX: number, clientY: number): void => {
@@ -42,13 +50,62 @@ const wordGrid = component<Component>(({ action, task, rootAction }) => {
   };
 
   return {
-    state: (props): State => ({ shuffledLetters: shuffleNotInOrder(props.word.split("")) }),
+    state: (props): State => ({
+      shuffledLetters: shuffleNotInOrder(props.word.split("")),
+      letterSlots: props.word.split("").map(() => null),
+      draggedLetter: null
+    }),
 
     actions: {
+      DragLetterStart: ({ letter }, { state }): { state: State } => ({
+        state: { ...state, draggedLetter: letter }
+      }),
+
+      DragFromSlot: ({ slotIndex, letter }, { state }): { state: State } => ({
+        state: {
+          ...state,
+          draggedLetter: letter,
+          letterSlots: state.letterSlots.map((s, i) => (i === slotIndex ? null : s))
+        }
+      }),
+
+      ClearSlot: ({ slotIndex }, { state }): { state: State } => ({
+        state: {
+          ...state,
+          letterSlots: state.letterSlots.map((s, i) => (i === slotIndex ? null : s))
+        }
+      }),
+
+      DropLetter: ({ slotIndex }, { state, props }): { state: State; next?: Next } => {
+        const { draggedLetter } = state;
+        if (draggedLetter === null) return { state };
+        const newLetterSlots = state.letterSlots.map((s, i) =>
+          i === slotIndex ? draggedLetter : s
+        );
+        const letters = props.word.split("");
+        const isComplete = newLetterSlots.every(
+          (slot, i) => slot !== null && slot.toLowerCase() === letters[i].toLowerCase()
+        );
+        return {
+          state: { ...state, draggedLetter: null, letterSlots: newLetterSlots },
+          next: isComplete
+            ? [task("SpeakString", { word: `${props.word}.` }), props.onComplete]
+            : task("SpeakString", { word: draggedLetter.toLowerCase() })
+        };
+      },
+
+      DragLetterEnd: (_, { state }): { state: State; next?: Next } => {
+        if (state.draggedLetter === null) return { state };
+        return {
+          state: { ...state, draggedLetter: null },
+          next: task("SpeakString", { word: state.draggedLetter })
+        };
+      },
+
       TouchStart: ({ letter, tileIndex }, { id, state, event }): { state: State; next: Next } => ({
         state,
         next: [
-          rootAction("DragLetterStart", { letter }),
+          action("DragLetterStart", { letter }),
           task("AttachDragClone", {
             tileId: `${id}-tile-${tileIndex}`,
             clientX: event?.touches?.[0]?.clientX ?? 0,
@@ -75,6 +132,12 @@ const wordGrid = component<Component>(({ action, task, rootAction }) => {
     },
 
     tasks: {
+      SpeakString: ({ word }): Task<void, Props, State> => ({
+        perform: (): void => {
+          speak(word);
+        }
+      }),
+
       AttachDragClone: ({ tileId, clientX, clientY }): Task<void, Props, State> => ({
         perform: (): void => {
           const target = document.getElementById(tileId);
@@ -120,15 +183,18 @@ const wordGrid = component<Component>(({ action, task, rootAction }) => {
           return null;
         },
         success: (slotIndex): Next =>
-          slotIndex !== null ? rootAction("DropLetter", { slotIndex }) : rootAction("DragLetterEnd")
+          slotIndex !== null ? action("DropLetter", { slotIndex }) : action("DragLetterEnd")
       })
     },
 
     view({ id, state, props }): VNode {
       const letters = props.word.split("");
       const shuffled = state.shuffledLetters;
+      const complete = state.letterSlots.every(
+        (slot, i) => slot !== null && slot.toLowerCase() === letters[i].toLowerCase()
+      );
 
-      const correctCounts = props.letterSlots.reduce<Record<string, number>>((acc, slot, i) => {
+      const correctCounts = state.letterSlots.reduce<Record<string, number>>((acc, slot, i) => {
         if (slot !== null && slot.toLowerCase() === letters[i].toLowerCase()) {
           const key = slot.toLowerCase();
           return { ...acc, [key]: (acc[key] || 0) + 1 };
@@ -147,22 +213,22 @@ const wordGrid = component<Component>(({ action, task, rootAction }) => {
         return false;
       });
 
-      return div(`#${id}.word-grid${props.complete ? ".word-complete" : ""}`, [
+      return div(`#${id}.word-grid${complete ? ".word-complete" : ""}`, [
         div(
           ".letterSlots-row",
           letters.map((letter, i) => {
-            const dropped = props.letterSlots[i] ?? null;
+            const dropped = state.letterSlots[i] ?? null;
             const isCorrect =
               dropped !== null ? dropped.toLowerCase() === letter.toLowerCase() : null;
-            const isDraggable = !!dropped && !props.complete;
+            const isDraggable = !!dropped && !complete;
             return letterSlot(`${id}-slot-${i}`, {
               droppedLetter: dropped,
               isCorrect,
               draggable: isDraggable,
-              onDrop: rootAction("DropLetter", { slotIndex: i }),
-              onDragFromSlot: rootAction("DragFromSlot", { slotIndex: i, letter: dropped ?? "" }),
-              onDragEnd: rootAction("DragLetterEnd"),
-              onReset: rootAction("ClearSlot", { slotIndex: i })
+              onDrop: action("DropLetter", { slotIndex: i }),
+              onDragFromSlot: action("DragFromSlot", { slotIndex: i, letter: dropped ?? "" }),
+              onDragEnd: action("DragLetterEnd"),
+              onReset: action("ClearSlot", { slotIndex: i })
             });
           })
         ),
@@ -172,8 +238,8 @@ const wordGrid = component<Component>(({ action, task, rootAction }) => {
             letterTile(`${id}-tile-${i}`, {
               letter,
               disabled: disabledTiles[i],
-              onDragLetterStart: rootAction("DragLetterStart", { letter }),
-              onDragLetterEnd: rootAction("DragLetterEnd"),
+              onDragLetterStart: action("DragLetterStart", { letter }),
+              onDragLetterEnd: action("DragLetterEnd"),
               onTouchStart: action("TouchStart", { letter, tileIndex: i }),
               onTouchMove: action("TouchMove"),
               onTouchEnd: action("TouchEnd")

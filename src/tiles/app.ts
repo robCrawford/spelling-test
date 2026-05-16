@@ -23,25 +23,17 @@ export type RootProps = Readonly<{
 export type RootState = Readonly<{
   celebrationImgIndex: string;
   celebrationVisible: boolean;
-  wordComplete: boolean;
-  letterSlots: (string | null)[];
-  draggedLetter: string | null;
   rewardsDisplayAmount: number;
 }>;
 
 export type RootActionPayloads = Readonly<{
-  DragLetterStart: { letter: string };
-  DragFromSlot: { slotIndex: number; letter: string };
-  ClearSlot: { slotIndex: number };
-  DropLetter: { slotIndex: number };
-  DragLetterEnd: undefined;
+  WordComplete: undefined;
   ShowCelebration: undefined;
   Reload: undefined;
   RedeemRewards: undefined;
 }>;
 
 export type RootTaskPayloads = Readonly<{
-  SpeakString: { word: string };
   RepeatWordTask: { word: string; hintId: string };
   CelebrateTask: undefined;
   AutoReloadTask: undefined;
@@ -57,62 +49,17 @@ export type Component = {
 };
 
 const app = component<Component>(({ action, task }) => ({
-  state: (props): RootState => ({
+  state: (): RootState => ({
     celebrationImgIndex: getLocalStorage(localStorageKeys.celebrationImgIndex) || "0",
     celebrationVisible: false,
-    wordComplete: false,
-    letterSlots: props.word.split("").map(() => null),
-    draggedLetter: null,
     rewardsDisplayAmount: getRewardsDisplayAmount()
   }),
 
   actions: {
-    DragLetterStart: ({ letter }, { state }): { state: RootState } => ({
-      state: { ...state, draggedLetter: letter }
+    WordComplete: (_, { state }): { state: RootState; next: Next } => ({
+      state,
+      next: task("CelebrateTask")
     }),
-
-    DragFromSlot: ({ slotIndex, letter }, { state }): { state: RootState } => ({
-      state: {
-        ...state,
-        draggedLetter: letter,
-        letterSlots: state.letterSlots.map((s, i) => (i === slotIndex ? null : s))
-      }
-    }),
-
-    ClearSlot: ({ slotIndex }, { state }): { state: RootState } => ({
-      state: {
-        ...state,
-        letterSlots: state.letterSlots.map((s, i) => (i === slotIndex ? null : s))
-      }
-    }),
-
-    DropLetter: ({ slotIndex }, { state, props }): { state: RootState; next?: Next } => {
-      const { draggedLetter } = state;
-      if (draggedLetter === null) return { state };
-      const newLetterSlots = state.letterSlots.map((s, i) => (i === slotIndex ? draggedLetter : s));
-      const isComplete = newLetterSlots.every(
-        (slot, i) => slot !== null && slot.toLowerCase() === props.word[i].toLowerCase()
-      );
-      return {
-        state: {
-          ...state,
-          draggedLetter: null,
-          letterSlots: newLetterSlots,
-          wordComplete: isComplete
-        },
-        next: isComplete
-          ? [task("SpeakString", { word: `${props.word}.` }), task("CelebrateTask")]
-          : task("SpeakString", { word: draggedLetter.toLowerCase() })
-      };
-    },
-
-    DragLetterEnd: (_, { state }): { state: RootState; next?: Next } => {
-      if (state.draggedLetter === null) return { state };
-      return {
-        state: { ...state, draggedLetter: null },
-        next: task("SpeakString", { word: state.draggedLetter })
-      };
-    },
 
     ShowCelebration: (_, { state }): { state: RootState; next: Next } => ({
       state: { ...state, celebrationVisible: true },
@@ -133,12 +80,6 @@ const app = component<Component>(({ action, task }) => ({
   },
 
   tasks: {
-    SpeakString: ({ word }): Task<void, RootProps, RootState> => ({
-      perform: (): void => {
-        speak(word);
-      }
-    }),
-
     CelebrateTask: (): Task<void, RootProps, RootState> => ({
       perform: (): Promise<void> => {
         const name = window.localStorage.getItem("spelling-name") || "";
@@ -208,11 +149,11 @@ const app = component<Component>(({ action, task }) => ({
       ]),
       wordGrid(`${id}-word`, {
         word: props.word,
-        letterSlots: state.letterSlots,
-        complete: state.wordComplete
+        onComplete: action("WordComplete")
       }),
       celebration(`${id}-celebration`, {
         visible: state.celebrationVisible,
+        imgIndex: state.celebrationImgIndex,
         onTap: action("Reload")
       }),
       div(

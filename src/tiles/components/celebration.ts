@@ -1,5 +1,4 @@
 import { ActionThunk, component, html, VNode } from "cr-26";
-import { RootState } from "../app";
 import { config } from "../config";
 
 const { div, h2, img } = html;
@@ -14,12 +13,12 @@ export const characterUrls = [
 
 export type Props = Readonly<{
   visible: boolean;
+  imgIndex: string;
   onTap: ActionThunk;
 }>;
 
 type Component = {
   Props: Props;
-  RootState: RootState;
 };
 
 const COLORS = [
@@ -56,7 +55,7 @@ function makeParticles(): VNode[] {
 }
 
 const celebration = component<Component>(() => ({
-  view({ id, props, rootState }): VNode {
+  view({ id, props }): VNode {
     if (!props.visible) return div(`#${id}`);
     return div(`#${id}.celebration`, { on: { click: props.onTap } }, [
       div(".celebration-backdrop"),
@@ -64,7 +63,7 @@ const celebration = component<Component>(() => ({
         div(".confetti-burst", makeParticles()),
         img(".celebration-img", {
           attrs: {
-            src: characterUrls[Number(rootState.celebrationImgIndex) % characterUrls.length],
+            src: characterUrls[Number(props.imgIndex) % characterUrls.length],
             alt: ""
           }
         }),
