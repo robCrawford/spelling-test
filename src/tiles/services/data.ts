@@ -8,12 +8,7 @@ const tempOverrideWords: string[] = [];
 const allWords = deduplicate(
   tempOverrideWords.length
     ? tempOverrideWords
-    : [
-        ...data.year1,
-        ...data.year2,
-        ...data.year3
-        // ...data.year4,
-      ]
+    : [...data.year1, ...data.year2, ...data.year3, ...data.year4]
 );
 
 export const getGameWord = (): string => allWords[Math.floor(Math.random() * allWords.length)];

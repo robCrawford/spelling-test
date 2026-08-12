@@ -21,7 +21,7 @@ let name = '';
 
 // Entries here will be the only words tested
 // NOTE: update fieldCount for rewards calculation!
-let tempOverrideWords = ["there", "their", "they're", "went", "house", "saw", "children"];
+let tempOverrideWords = [];
 
 // Clear local storage prior to latest key
 // NOTE: changing this removes all previous data from the browser!
@@ -48,7 +48,7 @@ export function initSpelling() {
     ...data.year1,
     ...data.year2,
     ...data.year3,
-    // ...data.year4,
+    ...data.year4,
   ]);
   const spellingState = JSON.parse(localStorage.getItem(spellingConfig.stateName) || '{}');
   const incompleteWords = allWords.filter(word => !((spellingState[word] || 0) >= spellingConfig.completedWordCount));
