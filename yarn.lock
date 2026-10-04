@@ -1558,10 +1558,10 @@ convert-source-map@^2.0.0:
   resolved "https://registry.yarnpkg.com/convert-source-map/-/convert-source-map-2.0.0.tgz#4b560f649fc4e918dd0ab75cf4961e8bc882d82a"
   integrity sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19TFykTz2xWmMeq6bk2NU3XXvfJ+Q61m0xktWwt+1HSYf3JZsTms3aRJg==
 
-cr-26@^0.1.2:
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/cr-26/-/cr-26-0.1.2.tgz#068a8c3a98d113684e5ac9986a20295e636680e0"
-  integrity sha512-cRBBF1IbfO/Ax+djsR8tHupq4mx+bt22U8C4AFL0QIO+QPhaZmGa8TGGM3Sm+wYEhnmzu15Vm59XWGQiB7pdZQ==
+cr-26@^0.1.6:
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/cr-26/-/cr-26-0.1.6.tgz#692e11f644a2dd5d5057e7dc3f012079081ca6f9"
+  integrity sha512-snQNw/TTAtGviUV4POqo168PPyoFAFjZPQqYVaOViETbakjF5/VNwxCwGWKCg9+co8nnP44xunJvnfS3POwlmA==
   dependencies:
     hyperscript-helpers "^3.0.3"
     snabbdom "^3.6.3"
